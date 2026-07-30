@@ -45,6 +45,16 @@
     }, { passive: false });
   });
 
+  /* ---------------- Setinhas de página das categorias do cardápio ---------------- */
+  const menuTabsWrap = document.querySelector('.menu-tabs-wrap');
+  const menuTabsPrev = document.getElementById('menuTabsPrev');
+  const menuTabsNext = document.getElementById('menuTabsNext');
+  if (menuTabsWrap && menuTabsPrev && menuTabsNext) {
+    const page = (dir) => menuTabsWrap.scrollBy({ left: dir * menuTabsWrap.clientWidth * 0.8, behavior: 'smooth' });
+    menuTabsPrev.addEventListener('click', () => page(-1));
+    menuTabsNext.addEventListener('click', () => page(1));
+  }
+
   /* ---------------- Hero: reveal cinético palavra a palavra ---------------- */
   const hero = document.querySelector('.hero-kinetic');
   if (hero) {

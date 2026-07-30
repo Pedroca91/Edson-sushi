@@ -320,8 +320,8 @@ h2 span{ color: var(--red); font-style: italic; }
   transition: all .3s var(--ease); z-index:2;
 }
 .featured-nav:hover{ background: var(--red); border-color: var(--red); color:#fff; transform: scale(1.06); }
-.featured-nav.prev{ margin-left: 24px; }
-.featured-nav.next{ margin-right: 24px; }
+.featured-wrap .featured-nav.prev{ margin-left: 24px; }
+.featured-wrap .featured-nav.next{ margin-right: 24px; }
 @media (max-width: 760px){
   .featured-nav{ display:none; }
 }
@@ -370,7 +370,12 @@ h2 span{ color: var(--red); font-style: italic; }
 .menu-search input::placeholder{ color: var(--text-faint); }
 .menu-search input:focus{ border-color: var(--red); box-shadow: 0 0 0 4px var(--red-glow); }
 
-.menu-tabs-wrap{ overflow-x:auto; scrollbar-width:none; margin-bottom: 36px; }
+.menu-tabs-row{ display:flex; align-items:center; gap:10px; margin-bottom: 36px; }
+.menu-tabs-row .menu-tabs-wrap{ flex:1; min-width:0; }
+@media (max-width: 760px){
+  .menu-tabs-row .featured-nav{ display:none; }
+}
+.menu-tabs-wrap{ overflow-x:auto; scrollbar-width:none; }
 .menu-tabs-wrap::-webkit-scrollbar{ display:none; }
 .menu-tabs{ display:flex; gap:10px; padding-bottom: 4px; width:max-content; }
 .menu-tab{
@@ -482,8 +487,9 @@ h2 span{ color: var(--red); font-style: italic; }
 .hours-table .hd{ font-size:14px; color: var(--text-dim); }
 .hours-table .hh{ font-size:14px; font-weight:600; color: var(--text); }
 
-.location-map{ border-radius: var(--radius); overflow:hidden; height: 440px; box-shadow: 0 30px 60px -30px rgba(0,0,0,.7); border: 1px solid var(--line); filter: grayscale(.3) contrast(1.1) brightness(.9); }
-.location-map iframe{ width:100%; height:100%; border:0; }
+.location-map{ position:relative; border-radius: var(--radius); overflow:hidden; height: 440px; box-shadow: 0 30px 60px -30px rgba(0,0,0,.7); border: 1px solid var(--line); filter: grayscale(.3) contrast(1.1) brightness(.9); }
+.location-map iframe{ width:100%; height:100%; border:0; pointer-events:none; }
+.location-map-link{ position:absolute; inset:0; cursor:pointer; }
 
 /* ============================================
    FOOTER
