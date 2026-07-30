@@ -155,7 +155,15 @@ const Cart = (() => {
       title.innerHTML = '<i class="bi bi-geo-alt"></i> Endereço de entrega';
       renderAddressView();
       totalRow.style.display = 'none';
-      actionBtn.style.display = 'none';
+      if (checkoutAddress) {
+        // endereço já confirmado (calculado ou revisitado via "voltar") - sempre dá pra seguir
+        actionBtn.style.display = 'inline-flex';
+        actionBtn.textContent = 'Continuar';
+        actionBtn.disabled = false;
+        actionBtn.onclick = () => goToStep(3);
+      } else {
+        actionBtn.style.display = 'none';
+      }
     } else if (step === 3) {
       title.innerHTML = '<i class="bi bi-credit-card"></i> Pagamento';
       renderPaymentView();
@@ -260,8 +268,9 @@ const Cart = (() => {
       checkoutAddress.feeNote = 'não foi possível calcular automaticamente — a loja confirmará a taxa';
     }
 
-    renderAddressView();
-    setTimeout(() => goToStep(3), 700);
+    // fica no passo 2 mostrando o resultado - não avança sozinho, dá tempo
+    // da pessoa conferir a taxa calculada antes de continuar por vontade própria.
+    goToStep(2);
   }
 
   function renderAddressView() {
@@ -282,7 +291,7 @@ const Cart = (() => {
         ${feeLine}
         <button class="btn btn-outline btn-block" id="changeAddrBtn" style="margin-top:14px;"><i class="bi bi-arrow-repeat"></i> Trocar endereço</button>
       `;
-      document.getElementById('changeAddrBtn').addEventListener('click', () => { checkoutAddress = null; renderAddressView(); });
+      document.getElementById('changeAddrBtn').addEventListener('click', () => { checkoutAddress = null; goToStep(2); });
       return;
     }
 
