@@ -1,0 +1,155 @@
+/* ============================================
+   PAINEL DE ADMIN — estilos específicos
+   (reaproveita variáveis e componentes de style.css)
+   ============================================ */
+
+.admin-body{ background: var(--bg-soft); }
+
+/* ---------------- Login ---------------- */
+.admin-login-screen{
+  min-height: 100vh; display:flex; align-items:center; justify-content:center; padding: 20px;
+}
+.admin-login-card{
+  width:100%; max-width: 420px; background: var(--surface); border: 1px solid var(--line-strong);
+  border-radius: var(--radius); padding: 40px 36px; text-align:center;
+}
+.admin-login-logo{ width:64px; height:64px; border-radius:50%; margin: 0 auto 18px; object-fit:cover; }
+.admin-login-card h1{ font-size: 24px; margin-bottom: 8px; }
+.admin-login-card p{ color: var(--text-dim); font-size:14px; margin: 0 0 24px; }
+.admin-login-card form{ text-align:left; }
+.admin-hint{ font-size:12.5px; color: var(--text-faint); margin-top:16px; display:flex; gap:6px; align-items:flex-start; text-align:left; }
+.admin-warning{
+  background: rgba(225,57,63,.1); border: 1px solid rgba(225,57,63,.3); color: #ffb4b4;
+  border-radius: var(--radius-sm); padding: 14px 16px; font-size: 13px; margin-bottom:20px; text-align:left;
+  display:flex; gap:10px; align-items:flex-start;
+}
+.admin-warning code{ background: rgba(0,0,0,.3); padding: 1px 6px; border-radius:4px; }
+
+/* ---------------- Dashboard layout ---------------- */
+.admin-dashboard{ display:flex; min-height: 100vh; }
+
+.admin-sidebar{
+  width: 260px; flex-shrink:0; background: var(--surface); border-right: 1px solid var(--line);
+  display:flex; flex-direction:column; padding: 26px 18px; position: sticky; top:0; height:100vh;
+}
+.admin-brand{ display:flex; align-items:center; gap:10px; margin-bottom: 30px; padding: 0 6px; }
+.admin-brand img{ width:36px; height:36px; border-radius:50%; object-fit:cover; }
+.admin-brand span{ font-family: var(--font-display); font-size:17px; display:flex; flex-direction:column; line-height:1.2; }
+.admin-brand em{ font-style:italic; color: var(--red); }
+.admin-brand small{ font-family: var(--font-body); font-size:10.5px; color: var(--text-faint); text-transform:uppercase; letter-spacing:.08em; }
+
+.admin-nav{ display:flex; flex-direction:column; gap:6px; flex:1; }
+.admin-nav-btn{
+  display:flex; align-items:center; gap:12px; padding: 13px 14px; border-radius: var(--radius-sm);
+  background: transparent; border:none; color: var(--text-dim); font-size:14.5px; font-weight:500; text-align:left;
+}
+.admin-nav-btn i{ font-size:17px; width:20px; }
+.admin-nav-btn:hover{ background: var(--surface-2); color: var(--text); }
+.admin-nav-btn.active{ background: var(--red); color:#fff; }
+
+.admin-view-site{
+  display:flex; align-items:center; gap:10px; padding: 12px 14px; margin-top: 10px;
+  color: var(--gold-light); font-size:13.5px; font-weight:600; border-radius: var(--radius-sm);
+}
+.admin-view-site:hover{ background: var(--surface-2); }
+
+.admin-logout{
+  display:flex; align-items:center; gap:10px; padding: 12px 14px; margin-top: 6px;
+  background: transparent; border: 1px solid var(--line); color: var(--text-dim); border-radius: var(--radius-sm); font-size:13.5px;
+}
+.admin-logout:hover{ border-color: var(--red); color: #ffb4b4; }
+
+.admin-main{ flex:1; padding: 40px 48px; max-width: 900px; }
+.admin-main h2{ font-size: 28px; margin-bottom:6px; }
+.admin-sub{ color: var(--text-dim); font-size:14px; margin: 0 0 28px; }
+
+.admin-panel{ display:none; }
+.admin-panel.active{ display:block; }
+
+.admin-card{
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 26px 28px; margin-bottom: 22px;
+}
+.admin-card h3{ font-size:16px; margin-bottom: 18px; }
+
+.admin-checks{ display:flex; gap:20px; flex-wrap:wrap; }
+.admin-checks label{ display:flex; align-items:center; gap:8px; font-size:14px; color: var(--text-dim); text-transform:none; letter-spacing:0; font-weight:500; }
+.admin-checks input{ width:16px; height:16px; accent-color: var(--red); }
+
+.form-group textarea{
+  width:100%; padding: 13px 16px; border-radius: var(--radius-sm); border: 1px solid var(--line);
+  background: var(--bg-soft); color: var(--text); font-size:14.5px; outline:none; resize: vertical; font-family: inherit;
+}
+.form-group textarea:focus{ border-color: var(--red); box-shadow: 0 0 0 4px var(--red-glow); }
+
+/* ---------------- Fee / hour rows ---------------- */
+.admin-row{
+  display:flex; gap:12px; align-items:center; margin-bottom: 12px;
+  padding: 12px; background: var(--bg-soft); border-radius: var(--radius-sm); border: 1px solid var(--line);
+}
+.admin-row input{ flex:1; }
+.admin-row .row-remove{
+  width:34px; height:34px; border-radius:50%; background: transparent; border:1px solid var(--line);
+  color: var(--text-faint); display:flex; align-items:center; justify-content:center; flex-shrink:0;
+}
+.admin-row .row-remove:hover{ border-color: var(--red); color: var(--red); }
+
+.hours-row{ display:flex; gap:12px; align-items:center; margin-bottom:10px; padding:12px; background:var(--bg-soft); border-radius:var(--radius-sm); border:1px solid var(--line); flex-wrap:wrap; }
+.hours-row .day-label{ width:90px; font-size:13.5px; font-weight:600; flex-shrink:0; }
+.hours-row input[type=text]{ width:90px; padding:9px 10px; font-size:13px; }
+.hours-row .range-sep{ color: var(--text-faint); font-size:13px; }
+
+/* ---------------- Categorias / itens ---------------- */
+.admin-categories{ margin-top: 24px; display:flex; flex-direction:column; gap:18px; }
+.admin-cat-card{ background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); overflow:hidden; }
+.admin-cat-head{
+  display:flex; align-items:center; justify-content:space-between; gap:14px;
+  padding: 18px 22px; cursor:pointer; user-select:none;
+}
+.admin-cat-head-left{ display:flex; align-items:center; gap:12px; flex:1; min-width:0; }
+.admin-cat-head input{ font-family: var(--font-display); font-size:18px; background:transparent; border:none; color:var(--text); padding:4px 0; width:auto; max-width:260px; }
+.admin-cat-head input:focus{ outline:none; border-bottom: 1px solid var(--gold); }
+.admin-cat-count{ font-size:12.5px; color: var(--text-faint); white-space:nowrap; }
+.admin-cat-actions{ display:flex; gap:8px; }
+.admin-cat-actions button{
+  width:34px; height:34px; border-radius:50%; background: var(--surface-2); border:1px solid var(--line);
+  color: var(--text-dim); display:flex; align-items:center; justify-content:center;
+}
+.admin-cat-actions button:hover{ border-color: var(--gold); color: var(--gold-light); }
+.admin-cat-actions button.danger:hover{ border-color: var(--red); color: var(--red); }
+
+.admin-cat-body{ border-top: 1px solid var(--line); padding: 18px 22px; display:none; }
+.admin-cat-body.open{ display:block; }
+
+.admin-item-row{
+  display:flex; align-items:center; gap:14px; padding: 12px 0; border-bottom: 1px dashed var(--line);
+}
+.admin-item-row:last-child{ border-bottom:none; }
+.admin-item-thumb{ width:48px; height:48px; border-radius:10px; overflow:hidden; background: var(--surface-2); flex-shrink:0; }
+.admin-item-thumb img{ width:100%; height:100%; object-fit:cover; }
+.admin-item-thumb .no-thumb{ width:100%; height:100%; display:flex; align-items:center; justify-content:center; color: var(--gold); }
+.admin-item-info{ flex:1; min-width:0; }
+.admin-item-info strong{ display:block; font-size:14.5px; }
+.admin-item-info span{ font-size:12.5px; color: var(--text-faint); }
+.admin-item-info .featured-tag{ color: var(--gold-light); font-weight:600; margin-left:8px; }
+.admin-item-price{ font-size:14px; font-weight:700; color: var(--gold-light); white-space:nowrap; }
+.admin-item-actions{ display:flex; gap:8px; flex-shrink:0; }
+.admin-item-actions button{
+  width:32px; height:32px; border-radius:50%; background: var(--surface-2); border:1px solid var(--line);
+  color: var(--text-dim); display:flex; align-items:center; justify-content:center; font-size:13.5px;
+}
+.admin-item-actions button:hover{ border-color: var(--gold); color: var(--gold-light); }
+.admin-item-actions button.danger:hover{ border-color: var(--red); color: var(--red); }
+
+.admin-add-item-btn{ margin-top: 14px; }
+
+.admin-img-preview{ margin-top:10px; }
+.admin-img-preview img{ width:90px; height:90px; object-fit:cover; border-radius: var(--radius-sm); border:1px solid var(--line); }
+
+@media (max-width: 900px){
+  .admin-dashboard{ flex-direction:column; }
+  .admin-sidebar{ width:100%; height:auto; position:relative; flex-direction:row; flex-wrap:wrap; align-items:center; }
+  .admin-nav{ flex-direction:row; flex-wrap:wrap; }
+  .admin-main{ padding: 26px 18px; max-width:100%; }
+  .form-row{ grid-template-columns: 1fr; }
+}

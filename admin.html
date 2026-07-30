@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Painel Admin — Edson Sushi</title>
+<link rel="icon" href="images/logo.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/admin.css">
+</head>
+<body class="admin-body">
+
+<!-- ===== LOGIN GATE ===== -->
+<div class="admin-login-screen" id="loginScreen">
+  <div class="admin-login-card">
+    <img src="images/logo.png" alt="Edson Sushi" class="admin-login-logo">
+    <h1>Painel do Administrador</h1>
+    <p>Acesso restrito ao dono do Edson Sushi.</p>
+
+    <div id="supabaseWarning" class="admin-warning" style="display:none;">
+      <i class="bi bi-exclamation-triangle"></i>
+      O Supabase ainda não foi configurado em <code>js/supabase-config.js</code>.
+      Configure-o primeiro para poder usar o painel (veja as instruções que foram enviadas junto com o site).
+    </div>
+
+    <form id="loginForm" novalidate>
+      <div class="form-group">
+        <label for="adminEmail">E-mail</label>
+        <input type="email" id="adminEmail" placeholder="voce@email.com" required autocomplete="username">
+      </div>
+      <div class="form-group">
+        <label for="adminPassword">Senha</label>
+        <input type="password" id="adminPassword" placeholder="••••••••" required autocomplete="current-password">
+      </div>
+      <span class="field-error" id="loginError">E-mail ou senha inválidos.</span>
+      <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+    </form>
+    <p class="admin-hint">Seu login de admin é criado no painel do Supabase (aba Authentication), não aqui.</p>
+  </div>
+</div>
+
+<!-- ===== DASHBOARD ===== -->
+<div class="admin-dashboard" id="dashboard" style="display:none;">
+
+  <aside class="admin-sidebar">
+    <div class="admin-brand">
+      <img src="images/logo.png" alt="Edson Sushi">
+      <span>Edson<em>Sushi</em><small>Admin</small></span>
+    </div>
+    <nav class="admin-nav">
+      <button class="admin-nav-btn active" data-panel="panel-settings"><i class="bi bi-sliders"></i> Configurações</button>
+      <button class="admin-nav-btn" data-panel="panel-menu"><i class="bi bi-journal-text"></i> Cardápio</button>
+      <button class="admin-nav-btn" data-panel="panel-import"><i class="bi bi-cloud-arrow-up"></i> Importar dados</button>
+    </nav>
+    <a href="index.html" class="admin-view-site" target="_blank"><i class="bi bi-box-arrow-up-right"></i> Ver site</a>
+    <button class="admin-logout" id="logoutBtn"><i class="bi bi-box-arrow-right"></i> Sair</button>
+  </aside>
+
+  <main class="admin-main">
+
+    <!-- ---------------- PAINEL: CONFIGURAÇÕES ---------------- -->
+    <section class="admin-panel active" id="panel-settings">
+      <h2>Configurações do site</h2>
+      <p class="admin-sub">Textos principais, contato, endereço, horários, pagamento e taxas de entrega.</p>
+
+      <div class="admin-card">
+        <h3>Textos da home</h3>
+        <div class="form-group">
+          <label>Título principal (parte normal)</label>
+          <input type="text" id="cfgHeroTitle" placeholder="Sushi de verdade, feito com">
+        </div>
+        <div class="form-group">
+          <label>Título principal (parte em destaque/itálico)</label>
+          <input type="text" id="cfgHeroTitleAccent" placeholder="alma japonesa.">
+        </div>
+        <div class="form-group">
+          <label>Texto abaixo do título (hero)</label>
+          <input type="text" id="cfgHeroLead" placeholder="Temakis generosos, combinados fartos...">
+        </div>
+        <div class="form-group">
+          <label>Texto da seção "Sobre"</label>
+          <textarea id="cfgAboutText" rows="3" placeholder="Há anos servindo o Cantinho do Céu..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Título da faixa de chamada (CTA)</label>
+            <input type="text" id="cfgCtaTitle" placeholder="Bateu a vontade de sushi?">
+          </div>
+          <div class="form-group">
+            <label>Texto da faixa de chamada (CTA)</label>
+            <input type="text" id="cfgCtaText" placeholder="Fale com a gente agora mesmo...">
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <h3>Contato e endereço</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nome do restaurante</label>
+            <input type="text" id="cfgName">
+          </div>
+          <div class="form-group">
+            <label>Frase/tagline</label>
+            <input type="text" id="cfgTagline">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>WhatsApp (com DDI+DDD, só números)</label>
+            <input type="text" id="cfgPhone" placeholder="5511987856060">
+          </div>
+          <div class="form-group">
+            <label>Telefone (formatado, exibido no site)</label>
+            <input type="text" id="cfgPhoneDisplay" placeholder="(11) 98785-6060">
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Endereço</label>
+          <input type="text" id="cfgAddress">
+        </div>
+        <div class="form-group">
+          <label>Complemento do endereço</label>
+          <input type="text" id="cfgAddressComplement">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Latitude (para cálculo da taxa de entrega)</label>
+            <input type="text" id="cfgLat">
+          </div>
+          <div class="form-group">
+            <label>Longitude (para cálculo da taxa de entrega)</label>
+            <input type="text" id="cfgLng">
+          </div>
+        </div>
+        <p class="admin-hint"><i class="bi bi-info-circle"></i> Não sabe a latitude/longitude exata? Busque "minha loja lat long" no Google Maps (clique com o botão direito no ponto exato do mapa) e cole os números aqui.</p>
+      </div>
+
+      <div class="admin-card">
+        <h3>Pedido mínimo e formas de pagamento</h3>
+        <div class="form-group">
+          <label>Valor mínimo do pedido (R$)</label>
+          <input type="number" step="0.01" id="cfgMinOrder">
+        </div>
+        <div class="form-group">
+          <label>Formas de pagamento aceitas</label>
+          <div class="admin-checks" id="cfgPayments">
+            <label><input type="checkbox" value="Dinheiro"> Dinheiro</label>
+            <label><input type="checkbox" value="Crédito"> Crédito</label>
+            <label><input type="checkbox" value="Débito"> Débito</label>
+            <label><input type="checkbox" value="Pix"> Pix</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="admin-card">
+        <h3>Taxas de entrega por distância</h3>
+        <p class="admin-hint">A taxa aplicada é a da primeira faixa cuja distância for maior ou igual à do cliente (calculada automaticamente pelo endereço).</p>
+        <div id="feeRows"></div>
+        <button class="btn btn-outline btn-sm" id="addFeeRow"><i class="bi bi-plus"></i> Adicionar faixa</button>
+      </div>
+
+      <div class="admin-card">
+        <h3>Horário de funcionamento</h3>
+        <div id="hoursRows"></div>
+      </div>
+
+      <button class="btn btn-primary btn-lg" id="saveSettingsBtn"><i class="bi bi-check2-circle"></i> Salvar configurações</button>
+    </section>
+
+    <!-- ---------------- PAINEL: CARDÁPIO ---------------- -->
+    <section class="admin-panel" id="panel-menu">
+      <h2>Cardápio</h2>
+      <p class="admin-sub">Adicione, edite ou remova categorias e produtos. Marque "destaque" para o item aparecer no carrossel da home.</p>
+
+      <button class="btn btn-primary" id="addCategoryBtn"><i class="bi bi-plus-lg"></i> Nova categoria</button>
+
+      <div id="categoriesWrap" class="admin-categories"></div>
+    </section>
+
+    <!-- ---------------- PAINEL: IMPORTAR ---------------- -->
+    <section class="admin-panel" id="panel-import">
+      <h2>Importar dados iniciais</h2>
+      <p class="admin-sub">Use este botão apenas uma vez, para copiar o cardápio e as configurações que já estão no site (js/menu-data.js) para o seu banco de dados no Supabase. Depois disso, edite tudo por aqui.</p>
+      <div class="admin-card">
+        <p style="margin-bottom:16px;color:var(--text-dim);font-size:14px;">
+          <i class="bi bi-exclamation-triangle" style="color:var(--gold-light);"></i>
+          Atenção: isso vai <strong>adicionar</strong> as categorias atuais do arquivo local ao banco de dados.
+          Se você já importou antes, isso vai duplicar as categorias — use apenas na primeira vez.
+        </p>
+        <button class="btn btn-gold btn-lg" id="seedBtn"><i class="bi bi-cloud-arrow-up"></i> Importar cardápio inicial para o Supabase</button>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- Modal de edição de item -->
+<div class="overlay" id="itemModalOverlay">
+  <div class="modal">
+    <button class="modal-close" id="itemModalClose"><i class="bi bi-x-lg"></i></button>
+    <div class="modal-head">
+      <h3 id="itemModalTitle">Editar produto</h3>
+    </div>
+    <form id="itemForm" novalidate>
+      <div class="form-group">
+        <label>Nome do prato</label>
+        <input type="text" id="itNome" required>
+      </div>
+      <div class="form-group">
+        <label>Descrição</label>
+        <input type="text" id="itDesc">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Preço (R$)</label>
+          <input type="number" step="0.01" id="itPreco">
+        </div>
+        <div class="form-group">
+          <label>Preço promocional (opcional)</label>
+          <input type="number" step="0.01" id="itPromo">
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Foto do produto</label>
+        <input type="file" id="itFoto" accept="image/*">
+        <div id="itFotoPreview" class="admin-img-preview"></div>
+      </div>
+      <div class="form-group">
+        <label><input type="checkbox" id="itFeatured" style="width:auto;margin-right:8px;"> Mostrar nos destaques da home</label>
+      </div>
+      <button type="submit" class="btn btn-primary btn-block" id="itSaveBtn">Salvar produto</button>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
+<script src="js/menu-data.js"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/supabase-sync.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edson Sushi — Culinária Japonesa em São Paulo</title>
+<meta name="description" content="Edson Sushi — excelência em culinária japonesa no Cantinho do Céu, São Paulo. Temakis, combinados, hot rolls, poke e muito mais. Peça pelo WhatsApp.">
+<link rel="icon" href="images/logo.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,500&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="grain"></div>
+
+<!-- ===== HEADER ===== -->
+<header class="site-header" id="header">
+  <div class="container header-inner">
+    <a href="#top" class="brand">
+      <img src="images/logo.png" alt="Edson Sushi" class="brand-logo">
+      <span class="brand-name">Edson<em>Sushi</em></span>
+    </a>
+
+    <nav class="main-nav" id="mainNav">
+      <a href="#destaques">Destaques</a>
+      <a href="#cardapio">Cardápio</a>
+      <a href="#sobre">Sobre</a>
+      <a href="#delivery">Delivery</a>
+      <a href="#local">Localização</a>
+    </nav>
+
+    <div class="header-actions">
+      <span class="status-pill" id="statusPill"><i class="bi bi-circle-fill"></i> <span id="statusText">verificando…</span></span>
+      <button class="btn-icon" id="cartBtn" aria-label="Abrir carrinho">
+        <i class="bi bi-bag"></i>
+        <span class="cart-badge" id="cartBadge" style="display:none;">0</span>
+      </button>
+      <button class="btn-icon" id="accountBtn" aria-label="Minha conta">
+        <i class="bi bi-person"></i>
+      </button>
+      <button class="nav-toggle" id="navToggle" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="top">
+  <div class="hero-media">
+    <img src="https://s3.us-west-2.amazonaws.com/whatsmenu/production/edsonsushi/products/1219665/edsonsushivdajgpfoons94pqwebp" alt="Pratos do Edson Sushi">
+    <div class="hero-overlay"></div>
+  </div>
+
+  <div class="container hero-content">
+    <p class="eyebrow"><i class="bi bi-sparkle"></i> Cantinho do Céu · São Paulo</p>
+    <h1><span id="heroTitleMain">Sushi de verdade,<br> feito com</span> <span id="heroTitleAccent">alma japonesa.</span></h1>
+    <p class="hero-lead" id="heroLeadText">Temakis generosos, combinados fartos e o frescor do salmão em cada peça. Peça pelo WhatsApp e receba em casa.</p>
+    <div class="hero-actions">
+      <a href="https://wa.me/5511987856060?text=Ol%C3%A1!%20Gostaria%20de%20fazer%20um%20pedido%20no%20Edson%20Sushi." target="_blank" rel="noopener" class="btn btn-primary">
+        <i class="bi bi-whatsapp"></i> Pedir pelo WhatsApp
+      </a>
+      <a href="#cardapio" class="btn btn-ghost">Ver cardápio completo</a>
+    </div>
+
+    <div class="hero-stats">
+      <div><strong>+90</strong><span>itens no cardápio</span></div>
+      <div><strong>4.9</strong><span>satisfação dos clientes</span></div>
+      <div><strong>30–60</strong><span>min de entrega</span></div>
+    </div>
+  </div>
+
+  <div class="hero-scroll"><span>role para explorar</span><i class="bi bi-arrow-down"></i></div>
+</section>
+
+<!-- ===== MARQUEE ===== -->
+<div class="marquee">
+  <div class="marquee-track">
+    <span>Temaki de Salmão</span><i class="bi bi-asterisk"></i>
+    <span>Hot Roll</span><i class="bi bi-asterisk"></i>
+    <span>Salada Poke</span><i class="bi bi-asterisk"></i>
+    <span>Combinados</span><i class="bi bi-asterisk"></i>
+    <span>Sashimi</span><i class="bi bi-asterisk"></i>
+    <span>Uramaki</span><i class="bi bi-asterisk"></i>
+    <span>Teppan</span><i class="bi bi-asterisk"></i>
+    <span>Temaki de Salmão</span><i class="bi bi-asterisk"></i>
+    <span>Hot Roll</span><i class="bi bi-asterisk"></i>
+    <span>Salada Poke</span><i class="bi bi-asterisk"></i>
+    <span>Combinados</span><i class="bi bi-asterisk"></i>
+    <span>Sashimi</span><i class="bi bi-asterisk"></i>
+    <span>Uramaki</span><i class="bi bi-asterisk"></i>
+    <span>Teppan</span><i class="bi bi-asterisk"></i>
+  </div>
+</div>
+
+<!-- ===== SOBRE / DIFERENCIAIS ===== -->
+<section class="about" id="sobre">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow"><i class="bi bi-sparkle"></i> Nossa essência</p>
+      <h2>Por que pedir no <span>Edson Sushi</span></h2>
+    </div>
+
+    <div class="about-grid">
+      <div class="about-lead">
+        <p id="aboutLeadText">Há anos servindo o Cantinho do Céu com sushis preparados na hora, ingredientes selecionados e aquele capricho de quem trata cada pedido como se fosse para a própria família. Do temaki clássico aos combinados para dividir, tudo pensado para chegar fresquinho até você.</p>
+      </div>
+
+      <div class="feature-cards">
+        <div class="feature-card reveal">
+          <i class="bi bi-egg-fried"></i>
+          <h3>Ingredientes frescos</h3>
+          <p>Salmão selecionado e preparo no mesmo dia, sem congelados de última hora.</p>
+        </div>
+        <div class="feature-card reveal">
+          <i class="bi bi-lightning-charge"></i>
+          <h3>Entrega rápida</h3>
+          <p>Delivery próprio calculado por distância, direto no seu endereço.</p>
+        </div>
+        <div class="feature-card reveal">
+          <i class="bi bi-hand-thumbs-up"></i>
+          <h3>Porções generosas</h3>
+          <p>Combinados robustos, feitos para compartilhar com quem você ama.</p>
+        </div>
+        <div class="feature-card reveal">
+          <i class="bi bi-whatsapp"></i>
+          <h3>Pedido facilitado</h3>
+          <p>Cardápio completo e pagamento via Pix, cartão ou dinheiro na entrega.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DESTAQUES ===== -->
+<section class="featured" id="destaques">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow"><i class="bi bi-star"></i> Os queridinhos</p>
+      <h2>Pratos que <span>mais saem</span> da nossa loja</h2>
+    </div>
+  </div>
+
+  <div class="featured-wrap">
+    <button class="featured-nav prev" id="featuredPrev" aria-label="Anterior"><i class="bi bi-chevron-left"></i></button>
+    <div class="featured-track-wrap" id="featuredTrackWrap">
+      <div class="featured-track" id="featuredTrack"></div>
+    </div>
+    <button class="featured-nav next" id="featuredNext" aria-label="Próximo"><i class="bi bi-chevron-right"></i></button>
+  </div>
+</section>
+
+<!-- ===== CARDÁPIO ===== -->
+<section class="menu-section" id="cardapio">
+  <div class="container">
+    <div class="section-head">
+      <p class="eyebrow"><i class="bi bi-journal-text"></i> Cardápio completo</p>
+      <h2>Escolha o seu <span>sabor</span></h2>
+    </div>
+
+    <div class="menu-search">
+      <i class="bi bi-search"></i>
+      <input type="text" id="menuSearch" placeholder="Buscar prato... (ex: salmão, poke, combinado)">
+    </div>
+
+    <div class="menu-tabs-wrap">
+      <div class="menu-tabs" id="menuTabs"></div>
+    </div>
+
+    <div class="menu-panels" id="menuPanels"></div>
+
+    <p class="menu-note"><i class="bi bi-info-circle"></i> Cardápio e preços sujeitos a alteração sem aviso prévio. Faça seu pedido completo pelo WhatsApp.</p>
+  </div>
+</section>
+
+<!-- ===== CTA FAIXA ===== -->
+<section class="cta-strip">
+  <div class="container cta-strip-inner">
+    <div>
+      <h3 id="ctaTitleText">Bateu a vontade de sushi?</h3>
+      <p id="ctaBodyText">Fale com a gente agora mesmo e monte seu pedido pelo WhatsApp.</p>
+    </div>
+    <a href="https://wa.me/5511987856060?text=Ol%C3%A1!%20Gostaria%20de%20fazer%20um%20pedido%20no%20Edson%20Sushi." target="_blank" rel="noopener" class="btn btn-primary btn-lg">
+      <i class="bi bi-whatsapp"></i> Chamar no WhatsApp
+    </a>
+  </div>
+</section>
+
+<!-- ===== DELIVERY / PAGAMENTO ===== -->
+<section class="delivery" id="delivery">
+  <div class="container">
+    <div class="section-head light">
+      <p class="eyebrow"><i class="bi bi-scooter"></i> Como funciona</p>
+      <h2>Delivery <span>simples</span> e transparente</h2>
+    </div>
+
+    <div class="delivery-grid">
+      <div class="delivery-card">
+        <i class="bi bi-cash-coin"></i>
+        <h3>Pedido mínimo</h3>
+        <p class="big">R$ 18,00</p>
+        <p>Valor mínimo para pedidos com entrega.</p>
+      </div>
+
+      <div class="delivery-card">
+        <i class="bi bi-credit-card-2-front"></i>
+        <h3>Formas de pagamento</h3>
+        <ul class="payment-list">
+          <li><i class="bi bi-cash"></i> Dinheiro</li>
+          <li><i class="bi bi-credit-card"></i> Crédito</li>
+          <li><i class="bi bi-credit-card-2-back"></i> Débito</li>
+          <li><i class="bi bi-qr-code"></i> Pix</li>
+        </ul>
+      </div>
+
+      <div class="delivery-card wide">
+        <i class="bi bi-signpost-split"></i>
+        <h3>Taxa de entrega por distância</h3>
+        <table class="fee-table">
+          <tbody id="feeTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== LOCALIZAÇÃO ===== -->
+<section class="location" id="local">
+  <div class="container location-grid">
+    <div class="location-info">
+      <p class="eyebrow"><i class="bi bi-geo-alt"></i> Onde estamos</p>
+      <h2>Venha nos visitar<br> ou peça <span>sem sair de casa</span></h2>
+
+      <ul class="info-list">
+        <li>
+          <i class="bi bi-geo-alt-fill"></i>
+          <div>
+            <strong>Endereço</strong>
+            <span>Rua Francisco Inácio Solano, 87 — Cantinho do Céu, São Paulo/SP</span>
+            <small>Próximo à academia Panobianco</small>
+          </div>
+        </li>
+        <li>
+          <i class="bi bi-telephone-fill"></i>
+          <div>
+            <strong>Telefone / WhatsApp</strong>
+            <span>(11) 98785-6060</span>
+          </div>
+        </li>
+        <li>
+          <i class="bi bi-clock-fill"></i>
+          <div>
+            <strong>Horário de funcionamento</strong>
+            <div class="hours-table" id="hoursTable"></div>
+          </div>
+        </li>
+      </ul>
+
+      <a href="https://wa.me/5511987856060" target="_blank" rel="noopener" class="btn btn-primary">
+        <i class="bi bi-whatsapp"></i> Falar no WhatsApp
+      </a>
+    </div>
+
+    <div class="location-map">
+      <iframe
+        title="Mapa Edson Sushi"
+        src="https://www.google.com/maps?q=Rua+Francisco+In%C3%A1cio+Solano,87,+Cantinho+do+C%C3%A9u,+S%C3%A3o+Paulo&output=embed"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="site-footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <div class="brand">
+        <img src="images/logo.png" alt="Edson Sushi" class="brand-logo">
+        <span class="brand-name">Edson<em>Sushi</em></span>
+      </div>
+      <p>Excelência na culinária japonesa, no Cantinho do Céu.</p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Navegação</h4>
+      <a href="#destaques">Destaques</a>
+      <a href="#cardapio">Cardápio</a>
+      <a href="#sobre">Sobre</a>
+      <a href="#delivery">Delivery</a>
+      <a href="#local">Localização</a>
+    </div>
+
+    <div class="footer-col">
+      <h4>Contato</h4>
+      <a href="https://wa.me/5511987856060" target="_blank" rel="noopener"><i class="bi bi-whatsapp"></i> (11) 98785-6060</a>
+      <a href="https://whatsmenu.com.br/edsonsushi" target="_blank" rel="noopener"><i class="bi bi-bag-check"></i> Fazer pedido online</a>
+      <span><i class="bi bi-geo-alt"></i> Cantinho do Céu, São Paulo/SP</span>
+    </div>
+
+    <div class="footer-col">
+      <h4>Redes sociais</h4>
+      <a href="#"><i class="bi bi-instagram"></i> Instagram</a>
+      <a href="#"><i class="bi bi-facebook"></i> Facebook</a>
+    </div>
+  </div>
+
+  <div class="footer-bottom">
+    <div class="container">
+      <span>© <span id="year"></span> Edson Sushi. Todos os direitos reservados.</span>
+      <span>Feito com <i class="bi bi-suit-heart-fill"></i> para os amantes de sushi.</span>
+    </div>
+  </div>
+</footer>
+
+<a href="https://wa.me/5511987856060?text=Ol%C3%A1!%20Gostaria%20de%20fazer%20um%20pedido%20no%20Edson%20Sushi." target="_blank" rel="noopener" class="whatsapp-float" aria-label="Pedir pelo WhatsApp">
+  <i class="bi bi-whatsapp"></i>
+</a>
+
+<button class="back-to-top" id="backToTop" aria-label="Voltar ao topo"><i class="bi bi-arrow-up"></i></button>
+
+<div class="toast-wrap" id="toastWrap"></div>
+
+<!-- ===== AUTH MODAL (Login / Cadastro) ===== -->
+<div class="overlay" id="authOverlay">
+  <div class="modal">
+    <button class="modal-close" id="authClose" aria-label="Fechar"><i class="bi bi-x-lg"></i></button>
+
+    <div class="modal-head">
+      <p class="eyebrow"><i class="bi bi-person-check"></i> Identifique-se</p>
+      <h3>Entre para montar seu pedido</h3>
+      <p>Só pedimos isso uma vez — na próxima compra já ficará salvo neste navegador.</p>
+    </div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab active" data-tab="login">Já sou cliente</button>
+      <button class="auth-tab" data-tab="signup">Criar cadastro</button>
+    </div>
+
+    <!-- LOGIN VIEW -->
+    <div class="auth-view active" id="loginView">
+      <form id="loginForm" novalidate>
+        <div class="form-group">
+          <label for="loginPhone">Celular cadastrado</label>
+          <input type="tel" id="loginPhone" placeholder="(11) 90000-0000" required>
+          <span class="field-error" id="loginPhoneError">Não encontramos um cadastro com esse celular.</span>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Entrar</button>
+        <p class="form-foot">Ainda não tem conta? <button type="button" data-tab="signup">Cadastre-se</button></p>
+      </form>
+    </div>
+
+    <!-- SIGNUP VIEW -->
+    <div class="auth-view" id="signupView">
+      <form id="signupForm" novalidate>
+        <div class="form-group">
+          <label for="suName">Nome completo</label>
+          <input type="text" id="suName" placeholder="Seu nome" required>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="suEmail">E-mail</label>
+            <input type="email" id="suEmail" placeholder="voce@email.com" required>
+          </div>
+          <div class="form-group">
+            <label for="suPhone">Celular</label>
+            <input type="tel" id="suPhone" placeholder="(11) 90000-0000" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="suCpf">CPF</label>
+          <input type="text" id="suCpf" placeholder="000.000.000-00" required>
+          <span class="field-error" id="suCpfError">CPF inválido. Confira os números.</span>
+        </div>
+
+        <div class="cep-row">
+          <div class="form-group">
+            <label for="suCep">CEP</label>
+            <input type="text" id="suCep" placeholder="00000-000" required>
+          </div>
+          <button type="button" class="btn btn-outline btn-sm" id="suCepBtn">Buscar</button>
+        </div>
+        <div class="cep-status" id="suCepStatus"></div>
+
+        <div class="form-group" style="margin-top:14px;">
+          <label for="suStreet">Rua</label>
+          <input type="text" id="suStreet" placeholder="Rua / Avenida">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="suNumber">Número</label>
+            <input type="text" id="suNumber" placeholder="123">
+          </div>
+          <div class="form-group">
+            <label for="suComplement">Complemento (opcional)</label>
+            <input type="text" id="suComplement" placeholder="Apto, bloco...">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label for="suNeighborhood">Bairro</label>
+            <input type="text" id="suNeighborhood" placeholder="Bairro">
+          </div>
+          <div class="form-group">
+            <label for="suCity">Cidade / UF</label>
+            <input type="text" id="suCity" placeholder="Cidade/UF">
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block">Criar cadastro e continuar</button>
+        <p class="form-foot">Já tem cadastro? <button type="button" data-tab="login">Entrar</button></p>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ===== MINHA CONTA ===== -->
+<div class="overlay" id="accountOverlay">
+  <div class="modal">
+    <button class="modal-close" id="accountClose" aria-label="Fechar"><i class="bi bi-x-lg"></i></button>
+
+    <div class="modal-head">
+      <p class="eyebrow"><i class="bi bi-person"></i> Minha conta</p>
+      <h3 id="accountGreeting">Olá!</h3>
+      <p>Atualize seus dados de contato e entrega quando precisar.</p>
+    </div>
+
+    <form id="accountForm" novalidate>
+      <div class="form-group">
+        <label for="accName">Nome completo</label>
+        <input type="text" id="accName" required>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="accEmail">E-mail</label>
+          <input type="email" id="accEmail" required>
+        </div>
+        <div class="form-group">
+          <label for="accPhone">Celular</label>
+          <input type="tel" id="accPhone" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="accCpf">CPF</label>
+        <input type="text" id="accCpf">
+        <span class="field-error" id="accCpfError">CPF inválido. Confira os números.</span>
+      </div>
+
+      <div class="cep-row">
+        <div class="form-group">
+          <label for="accCep">CEP</label>
+          <input type="text" id="accCep" placeholder="00000-000">
+        </div>
+        <button type="button" class="btn btn-outline btn-sm" id="accCepBtn">Buscar</button>
+      </div>
+      <div class="cep-status" id="accCepStatus"></div>
+
+      <div class="form-group" style="margin-top:14px;">
+        <label for="accStreet">Rua</label>
+        <input type="text" id="accStreet" placeholder="Rua / Avenida">
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="accNumber">Número</label>
+          <input type="text" id="accNumber" placeholder="123">
+        </div>
+        <div class="form-group">
+          <label for="accComplement">Complemento (opcional)</label>
+          <input type="text" id="accComplement" placeholder="Apto, bloco...">
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="accNeighborhood">Bairro</label>
+          <input type="text" id="accNeighborhood" placeholder="Bairro">
+        </div>
+        <div class="form-group">
+          <label for="accCity">Cidade / UF</label>
+          <input type="text" id="accCity" placeholder="Cidade/UF">
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block">Salvar alterações</button>
+      <button type="button" class="btn btn-outline btn-block" id="accountLogoutBtn" style="margin-top:10px;"><i class="bi bi-box-arrow-right"></i> Sair da conta</button>
+    </form>
+  </div>
+</div>
+
+<!-- ===== CART DRAWER ===== -->
+<div class="drawer-overlay" id="cartOverlay">
+  <aside class="cart-drawer">
+    <div class="drawer-head">
+      <button class="drawer-back" id="drawerBackBtn" style="display:none;"><i class="bi bi-arrow-left"></i></button>
+      <h3 id="drawerTitle"><i class="bi bi-bag"></i> Seu pedido</h3>
+      <button class="drawer-close" id="cartClose" aria-label="Fechar"><i class="bi bi-x-lg"></i></button>
+    </div>
+
+    <div class="drawer-body">
+
+      <!-- STEP 1: CART -->
+      <div class="drawer-view active" id="viewCart">
+        <div id="cartItemsWrap"></div>
+      </div>
+
+      <!-- STEP 2: ADDRESS -->
+      <div class="drawer-view" id="viewAddress">
+        <div class="step-dots"><span class="active"></span><span></span><span></span></div>
+        <div id="addressConfirmWrap"></div>
+      </div>
+
+      <!-- STEP 3: PAYMENT -->
+      <div class="drawer-view" id="viewPayment">
+        <div class="step-dots"><span class="active"></span><span class="active"></span><span></span></div>
+        <h4 style="font-size:15px;margin-bottom:16px;color:var(--text-dim);font-weight:600;">Forma de pagamento</h4>
+        <div class="payment-options" id="paymentOptions"></div>
+        <div class="form-group" id="troco-wrap" style="display:none;">
+          <label for="trocoInput">Precisa de troco para quanto?</label>
+          <input type="text" id="trocoInput" placeholder="Ex: R$ 100,00 (opcional)">
+        </div>
+      </div>
+
+      <!-- STEP 4: REVIEW -->
+      <div class="drawer-view" id="viewReview">
+        <div class="step-dots"><span class="active"></span><span class="active"></span><span class="active"></span></div>
+        <div id="reviewWrap"></div>
+      </div>
+
+    </div>
+
+    <div class="drawer-foot">
+      <div class="summary-row total" id="drawerTotalRow" style="display:none;">
+        <span>Total</span><span id="drawerTotal">R$ 0,00</span>
+      </div>
+      <button class="btn btn-primary btn-block" id="drawerActionBtn">Continuar</button>
+    </div>
+  </aside>
+</div>
+
+<!-- Supabase (usado pelo painel de super admin — opcional pro site funcionar) -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+
+<script src="js/menu-data.js"></script>
+<script src="js/supabase-config.js"></script>
+<script src="js/supabase-sync.js"></script>
+<script src="js/toast.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/cart.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>
