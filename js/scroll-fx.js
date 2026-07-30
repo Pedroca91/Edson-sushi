@@ -6,17 +6,20 @@
    ============================================ */
 (() => {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // Mobile/touch usa sempre o scroll nativo (mais rápido e mais leve pra bateria/CPU)
+  // — Lenis e cursor customizado são só "tempero" de desktop com mouse.
+  const isFinePointer = window.matchMedia('(pointer: fine)').matches;
 
-  /* ---------------- Lenis (scroll suave com momentum) ---------------- */
-  if (!reduceMotion && window.Lenis) {
+  /* ---------------- Lenis (scroll suave com momentum, só desktop) ---------------- */
+  if (!reduceMotion && isFinePointer && window.Lenis) {
     document.documentElement.classList.add('has-lenis');
-    const lenis = new Lenis({ duration: 1.1, smoothWheel: true });
+    const lenis = new Lenis({ duration: 0.7, smoothWheel: true, touchMultiplier: 0 });
     function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
     requestAnimationFrame(raf);
   }
 
   /* ---------------- Cursor customizado (só em dispositivos com mouse) ---------------- */
-  if (!reduceMotion && window.matchMedia('(pointer: fine)').matches) {
+  if (!reduceMotion && isFinePointer) {
     const ring = document.getElementById('cursorRing');
     if (ring) {
       document.documentElement.classList.add('cursor-fine');
