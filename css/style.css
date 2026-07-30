@@ -32,9 +32,7 @@
 }
 
 *, *::before, *::after{ box-sizing: border-box; }
-html{ scroll-padding-top: 90px; }
-html.has-lenis{ scroll-behavior: auto; }
-html:not(.has-lenis){ scroll-behavior: smooth; }
+html{ scroll-padding-top: 90px; scroll-behavior: smooth; }
 body{
   margin:0;
   background: var(--bg);
@@ -66,16 +64,17 @@ input, select{ font-family:inherit; }
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* custom cursor (só ativado via JS em dispositivos com mouse fino) */
-.cursor-ring{
-  position: fixed; top:0; left:0; width: 30px; height: 30px; border-radius: 50%;
-  border: 1.5px solid var(--red); pointer-events: none; z-index: 9999;
-  opacity: 0; transition: width .28s var(--ease), height .28s var(--ease), background .28s var(--ease), opacity .2s, border-color .28s;
+/* custom cursor: mini hashi (só ativado via JS em dispositivos com mouse fino) */
+.cursor-hashi{
+  position: fixed; top:0; left:0; width: 40px; height: 40px;
+  margin: -6px 0 0 -6px; /* alinha a "ponta" do hashi (canto inferior-esquerdo do svg) ao ponteiro real */
+  pointer-events: none; z-index: 9999;
+  opacity: 0; transition: opacity .2s, transform .12s var(--ease);
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,.45));
 }
-html.cursor-fine .cursor-ring{ opacity: .85; }
-html.cursor-fine .cursor-ring.is-hidden{ opacity: 0; }
+html.cursor-fine .cursor-hashi{ opacity: .95; }
+html.cursor-fine .cursor-hashi.is-hidden{ opacity: 0; }
 html.cursor-fine, html.cursor-fine a, html.cursor-fine button, html.cursor-fine input{ cursor: none; }
-.cursor-ring.hover{ width: 60px; height: 60px; background: rgba(225,57,63,.18); border-color: var(--red); }
 
 .eyebrow{
   display:inline-flex; align-items:center; gap:8px;
@@ -739,7 +738,7 @@ h2 span{ color: var(--red); font-style: italic; }
   .hero-scroll{ display:none; }
   .hero-index{ display:none; }
 
-  .cursor-ring{ display:none; }
+  .cursor-hashi{ display:none; }
 
   .about, .featured, .menu-section, .delivery, .location{ padding: 70px 0; }
 

@@ -1,46 +1,49 @@
 /* ============================================
-   SCROLL FX — scroll suave, cursor customizado, tipografia cinética
-   do hero e narrativa "presa" (sticky) da seção de Delivery.
-   Puramente decorativo: se alguma peça (ex. Lenis via CDN) não carregar,
-   o site continua 100% funcional, só sem o efeito.
+   SCROLL FX — cursor customizado (mini hashi), tipografia cinética do hero,
+   narrativa "presa" (sticky) da Delivery e scroll horizontal por wheel nas
+   faixas de categoria/destaques. Sem lib de scroll suave: scroll é sempre
+   o nativo do navegador (mais rápido e mais leve, principalmente no celular).
    ============================================ */
 (() => {
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  // Mobile/touch usa sempre o scroll nativo (mais rápido e mais leve pra bateria/CPU)
-  // — Lenis e cursor customizado são só "tempero" de desktop com mouse.
+  // Mobile/touch nunca ativa o cursor customizado — é só "tempero" de desktop com mouse.
   const isFinePointer = window.matchMedia('(pointer: fine)').matches;
 
-  /* ---------------- Lenis (scroll suave com momentum, só desktop) ---------------- */
-  if (!reduceMotion && isFinePointer && window.Lenis) {
-    document.documentElement.classList.add('has-lenis');
-    const lenis = new Lenis({ duration: 0.7, smoothWheel: true, touchMultiplier: 0 });
-    function raf(time) { lenis.raf(time); requestAnimationFrame(raf); }
-    requestAnimationFrame(raf);
-  }
-
-  /* ---------------- Cursor customizado (só em dispositivos com mouse) ---------------- */
+  /* ---------------- Cursor customizado: mini hashi (só em dispositivos com mouse) ---------------- */
   if (!reduceMotion && isFinePointer) {
-    const ring = document.getElementById('cursorRing');
-    if (ring) {
+    const cursor = document.getElementById('cursorHashi');
+    if (cursor) {
       document.documentElement.classList.add('cursor-fine');
-      let x = 0, y = 0, rx = 0, ry = 0;
+      let x = 0, y = 0, rx = 0, ry = 0, hovering = false;
       window.addEventListener('mousemove', (e) => { x = e.clientX; y = e.clientY; });
       (function follow() {
-        rx += (x - rx) * 0.22;
-        ry += (y - ry) * 0.22;
-        ring.style.transform = `translate(${rx}px, ${ry}px) translate(-50%, -50%)`;
+        rx += (x - rx) * 0.28;
+        ry += (y - ry) * 0.28;
+        const scale = hovering ? 1.25 : 1;
+        const angle = hovering ? -22 : -38;
+        cursor.style.transform = `translate(${rx}px, ${ry}px) rotate(${angle}deg) scale(${scale})`;
         requestAnimationFrame(follow);
       })();
       document.addEventListener('mouseover', (e) => {
-        if (e.target.closest('a, button, input, [data-cursor="hover"]')) ring.classList.add('hover');
+        if (e.target.closest('a, button, input, [data-cursor="hover"]')) { hovering = true; cursor.classList.add('hover'); }
       });
       document.addEventListener('mouseout', (e) => {
-        if (e.target.closest('a, button, input, [data-cursor="hover"]')) ring.classList.remove('hover');
+        if (e.target.closest('a, button, input, [data-cursor="hover"]')) { hovering = false; cursor.classList.remove('hover'); }
       });
-      document.addEventListener('mouseleave', () => ring.classList.add('is-hidden'));
-      document.addEventListener('mouseenter', () => ring.classList.remove('is-hidden'));
+      document.addEventListener('mouseleave', () => cursor.classList.add('is-hidden'));
+      document.addEventListener('mouseenter', () => cursor.classList.remove('is-hidden'));
     }
   }
+
+  /* ---------------- Faixas horizontais: roda do mouse vertical vira scroll horizontal ---------------- */
+  document.querySelectorAll('.menu-tabs-wrap, .featured-track-wrap').forEach((wrap) => {
+    wrap.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return; // já é gesto horizontal, deixa nativo
+      if (wrap.scrollWidth <= wrap.clientWidth) return; // nada pra rolar
+      e.preventDefault();
+      wrap.scrollLeft += e.deltaY;
+    }, { passive: false });
+  });
 
   /* ---------------- Hero: reveal cinético palavra a palavra ---------------- */
   const hero = document.querySelector('.hero-kinetic');

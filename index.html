@@ -17,7 +17,14 @@
 <body>
 
 <div class="grain"></div>
-<div class="cursor-ring" id="cursorRing"></div>
+<div class="cursor-hashi" id="cursorHashi">
+  <svg viewBox="0 0 40 40" width="40" height="40" fill="none">
+    <line x1="7" y1="33" x2="31" y2="5" stroke="#e9c68f" stroke-width="3" stroke-linecap="round"/>
+    <line x1="7" y1="33" x2="16.5" y2="21.8" stroke="#e1393f" stroke-width="3" stroke-linecap="round"/>
+    <line x1="12" y1="35" x2="34" y2="9" stroke="#f4eee2" stroke-width="2.4" stroke-linecap="round"/>
+    <line x1="12" y1="35" x2="20.4" y2="25.2" stroke="#e1393f" stroke-width="2.4" stroke-linecap="round"/>
+  </svg>
+</div>
 
 <!-- ===== HEADER ===== -->
 <header class="site-header" id="header">
@@ -568,8 +575,6 @@
 
 <!-- Supabase (usado pelo painel de super admin — opcional pro site funcionar) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-<!-- Lenis (scroll suave com momentum) — puramente decorativo, o site funciona normalmente sem ele -->
-<script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
 
 <script src="js/menu-data.js"></script>
 <script src="js/supabase-config.js"></script>

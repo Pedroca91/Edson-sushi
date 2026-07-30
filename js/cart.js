@@ -21,9 +21,8 @@ const Cart = (() => {
     return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   }
 
-  async function geocodeAddress(addr) {
-    const parts = [addr.street, addr.number, addr.neighborhood, addr.city || 'São Paulo', 'Brasil'].filter(Boolean);
-    const q = encodeURIComponent(parts.join(', '));
+  async function tryGeocode(parts) {
+    const q = encodeURIComponent(parts.filter(Boolean).join(', '));
     try {
       const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&countrycodes=br&q=${q}`);
       if (!res.ok) return null;
@@ -33,6 +32,25 @@ const Cart = (() => {
     } catch (e) {
       return null;
     }
+  }
+
+  // Busca em cascata: o buscador (Nominatim/OpenStreetMap) costuma ter a rua
+  // mapeada mas não cada número de casa — juntar tudo numa busca só falha
+  // com frequência mesmo pra endereço real. Vai afrouxando até achar algo
+  // (aproximado é suficiente pra calcular a faixa de distância da entrega).
+  async function geocodeAddress(addr) {
+    const city = addr.city || 'São Paulo';
+    const attempts = [
+      [addr.street, addr.number, addr.neighborhood, city, 'Brasil'],
+      [addr.street, addr.number, city, 'Brasil'],
+      [addr.street, addr.neighborhood, city, 'Brasil'],
+      [addr.street, city, 'Brasil'],
+    ];
+    for (const parts of attempts) {
+      const coords = await tryGeocode(parts);
+      if (coords) return coords;
+    }
+    return null;
   }
 
   // encontra a faixa de taxa configurada em BUSINESS.deliveryFees para uma dada distância
