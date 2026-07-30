@@ -1,40 +1,41 @@
 /* ============================================
-   AUTH — cadastro / login simples (localStorage)
-   Sem backend: os dados ficam salvos apenas neste
-   navegador/dispositivo do cliente.
+   AUTH — cadastro / login de clientes
+   Fonte da verdade é a tabela `customers` no Supabase (acessada só via a
+   Edge Function `customer-auth`, que roda com a service_role key — a tabela
+   não tem nenhuma policy de RLS pra anon, então o navegador nunca lê/escreve
+   nela direto). O único dado que continua no localStorage deste navegador é
+   um CACHE do cliente atualmente "logado" (sem senha/OTP, mesma identificação
+   simples por celular de antes) — permite telas síncronas (carrinho/checkout)
+   sem reescrever tudo em async, e é sempre repopulado a partir do banco no
+   login/cadastro/atualização, então funciona em qualquer dispositivo.
    ============================================ */
 
 const Auth = (() => {
 
-  const USERS_KEY = 'edsonsushi_users';
-  const SESSION_KEY = 'edsonsushi_session';
-
-  /* ---------------- Storage helpers ---------------- */
-  const getUsers = () => {
-    try { return JSON.parse(localStorage.getItem(USERS_KEY)) || []; }
-    catch (e) { return []; }
-  };
-  const saveUsers = (users) => localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  const CACHE_KEY = 'edsonsushi_customer_cache';
 
   const onlyDigits = (s) => (s || '').replace(/\D/g, '');
 
   const getCurrentUser = () => {
-    const phone = localStorage.getItem(SESSION_KEY);
-    if (!phone) return null;
-    return getUsers().find(u => u.phone === phone) || null;
+    try { return JSON.parse(localStorage.getItem(CACHE_KEY)) || null; }
+    catch (e) { return null; }
   };
 
-  const setSession = (phone) => localStorage.setItem(SESSION_KEY, phone);
+  const setSession = (user) => localStorage.setItem(CACHE_KEY, JSON.stringify(user));
 
-  const findByPhone = (phone) => getUsers().find(u => u.phone === onlyDigits(phone));
+  async function callFn(action, payload) {
+    if (!window.supabaseClient) {
+      return { ok: false, error: 'Supabase não configurado.' };
+    }
+    const { data, error } = await supabaseClient.functions.invoke('customer-auth', {
+      body: { action, ...payload }
+    });
+    if (error) return { ok: false, error: error.message || 'Falha de conexão.' };
+    return data;
+  }
 
-  const upsertUser = (user) => {
-    const users = getUsers();
-    const idx = users.findIndex(u => u.phone === user.phone);
-    if (idx >= 0) users[idx] = { ...users[idx], ...user };
-    else users.push(user);
-    saveUsers(users);
-  };
+  const lookupByPhone = (phone) => callFn('lookup', { phone: onlyDigits(phone) });
+  const upsertUser = (user) => callFn('upsert', user);
 
   /* ---------------- Masks ---------------- */
   const maskPhone = (v) => {
@@ -166,22 +167,30 @@ const Auth = (() => {
     suCepBtn.addEventListener('click', runCepLookup);
     suCep.addEventListener('blur', () => { if (onlyDigits(suCep.value).length === 8) runCepLookup(); });
 
-    loginForm.addEventListener('submit', (e) => {
+    loginForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const phone = onlyDigits(loginPhone.value);
-      const user = findByPhone(phone);
-      if (!user) {
+      const submitBtn = loginForm.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      const res = await lookupByPhone(phone);
+      submitBtn.disabled = false;
+
+      if (!res.ok) {
+        Toast.show(res.error || 'Não foi possível entrar agora. Tente novamente.', true);
+        return;
+      }
+      if (!res.found) {
         loginPhoneError.classList.add('show');
         return;
       }
-      setSession(user.phone);
+      setSession(res.customer);
       closeModal();
-      Toast.show(`Bem-vindo(a) de volta, ${user.name.split(' ')[0]}!`);
+      Toast.show(`Bem-vindo(a) de volta, ${res.customer.name.split(' ')[0]}!`);
       if (pendingAfterAuth) { const cb = pendingAfterAuth; pendingAfterAuth = null; cb(); }
       document.dispatchEvent(new CustomEvent('edson:authchange'));
     });
 
-    signupForm.addEventListener('submit', (e) => {
+    signupForm.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       if (!isValidCpf(suCpf.value)) {
@@ -209,10 +218,18 @@ const Auth = (() => {
         city: suCity.value.trim()
       };
 
-      upsertUser(user);
-      setSession(user.phone);
+      const submitBtn = signupForm.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      const res = await upsertUser(user);
+      submitBtn.disabled = false;
+
+      if (!res.ok) {
+        Toast.show(res.error || 'Não foi possível criar o cadastro agora. Tente novamente.', true);
+        return;
+      }
+      setSession(res.customer);
       closeModal();
-      Toast.show(`Cadastro criado! Bem-vindo(a), ${user.name.split(' ')[0]}.`);
+      Toast.show(`Cadastro criado! Bem-vindo(a), ${res.customer.name.split(' ')[0]}.`);
       if (pendingAfterAuth) { const cb = pendingAfterAuth; pendingAfterAuth = null; cb(); }
       document.dispatchEvent(new CustomEvent('edson:authchange'));
     });
@@ -281,7 +298,7 @@ const Auth = (() => {
       }
     });
 
-    accountForm.addEventListener('submit', (e) => {
+    accountForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const oldUser = getCurrentUser();
       if (!oldUser) return;
@@ -300,10 +317,10 @@ const Auth = (() => {
       }
 
       const updated = {
-        ...oldUser,
         name: accName.value.trim(),
         email: accEmail.value.trim(),
         phone: newPhone,
+        previousPhone: oldUser.phone,
         cpf: cpfDigits,
         cep: onlyDigits(accCep.value),
         street: accStreet.value.trim(),
@@ -313,10 +330,16 @@ const Auth = (() => {
         city: accCity.value.trim()
       };
 
-      const users = getUsers().filter(u => u.phone !== oldUser.phone);
-      users.push(updated);
-      saveUsers(users);
-      setSession(updated.phone);
+      const submitBtn = accountForm.querySelector('button[type="submit"]');
+      submitBtn.disabled = true;
+      const res = await upsertUser(updated);
+      submitBtn.disabled = false;
+
+      if (!res.ok) {
+        Toast.show(res.error || 'Não foi possível salvar agora. Tente novamente.', true);
+        return;
+      }
+      setSession(res.customer);
 
       closeAccountModal();
       Toast.show('Dados atualizados com sucesso!');
@@ -346,7 +369,7 @@ const Auth = (() => {
   }
 
   function logout() {
-    localStorage.removeItem(SESSION_KEY);
+    localStorage.removeItem(CACHE_KEY);
   }
 
   return {
