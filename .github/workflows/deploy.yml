@@ -1,0 +1,25 @@
+name: Deploy Produção
+
+on:
+  push:
+    branches:
+      - main
+
+  workflow_dispatch:
+
+concurrency:
+  group: edsonsushi-producao
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on:
+      - self-hosted
+      - Linux
+      - X64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build e subir container (PedroServe)
+        run: docker compose -p edsonsushi -f docker-compose.prod.yml up -d --build

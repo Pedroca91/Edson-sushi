@@ -1,0 +1,50 @@
+# Edson Sushi - Docker Compose de PRODUCAO
+# Projeto independente do Carvalho Tech Oficinas: repositorio, imagem e
+# container proprios. Compartilha apenas a rede `carvalhotech-network` e o
+# Traefik ja em execucao no PedroServe (criados pelo docker-compose.prod.yml
+# das Oficinas) - nenhum arquivo daquele projeto e lido/alterado por este.
+#
+# Uso: docker compose -p edsonsushi -f docker-compose.prod.yml up -d --build
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: carvalhotech/edsonsushi:latest
+    container_name: edsonsushi-app
+    restart: unless-stopped
+    expose:
+      - "80"
+    networks:
+      - carvalhotech-network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "5"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=carvalhotech-network"
+      # Garante barra final (assets do site sao referenciados com caminho
+      # relativo, ex. "css/style.css" - sem a barra eles resolveriam contra "/").
+      - "traefik.http.middlewares.edsonsushi-addslash.redirectregex.regex=^https://(www\\.)?carvalhotech\\.com/edson-sushi$$"
+      - "traefik.http.middlewares.edsonsushi-addslash.redirectregex.replacement=https://$${1}carvalhotech.com/edson-sushi/"
+      - "traefik.http.middlewares.edsonsushi-addslash.redirectregex.permanent=true"
+      # Remove o prefixo antes de encaminhar pro nginx, que serve a partir da raiz.
+      - "traefik.http.middlewares.edsonsushi-strip.stripprefix.prefixes=/edson-sushi"
+      # Prioridade 200: precisa vencer o router "app" (100, dominio inteiro) e o
+      # router "app-tenants" (10, wildcard de slug) das Oficinas para esse path.
+      - "traefik.http.routers.edsonsushi.rule=(Host(`carvalhotech.com`) || Host(`www.carvalhotech.com`)) && PathPrefix(`/edson-sushi`)"
+      - "traefik.http.routers.edsonsushi.entrypoints=websecure"
+      - "traefik.http.routers.edsonsushi.tls=true"
+      - "traefik.http.routers.edsonsushi.tls.certresolver=le"
+      - "traefik.http.routers.edsonsushi.priority=200"
+      - "traefik.http.routers.edsonsushi.service=edsonsushi"
+      - "traefik.http.routers.edsonsushi.middlewares=edsonsushi-addslash,edsonsushi-strip,secure-chain@file"
+      - "traefik.http.services.edsonsushi.loadbalancer.server.port=80"
+
+networks:
+  carvalhotech-network:
+    external: true
+    name: carvalhotech-network
