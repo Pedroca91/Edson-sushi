@@ -17,6 +17,7 @@
 <body>
 
 <div class="grain"></div>
+<div class="cursor-ring" id="cursorRing"></div>
 
 <!-- ===== HEADER ===== -->
 <header class="site-header" id="header">
@@ -56,23 +57,27 @@
   </div>
 
   <div class="container hero-content">
-    <p class="eyebrow"><i class="bi bi-sparkle"></i> Cantinho do Céu · São Paulo</p>
-    <h1><span id="heroTitleMain">Sushi de verdade,<br> feito com</span> <span id="heroTitleAccent">alma japonesa.</span></h1>
-    <p class="hero-lead" id="heroLeadText">Temakis generosos, combinados fartos e o frescor do salmão em cada peça. Peça pelo WhatsApp e receba em casa.</p>
-    <div class="hero-actions">
-      <a href="https://wa.me/5511987856060?text=Ol%C3%A1!%20Gostaria%20de%20fazer%20um%20pedido%20no%20Edson%20Sushi." target="_blank" rel="noopener" class="btn btn-primary">
+    <p class="eyebrow reveal"><i class="bi bi-sparkle"></i> Cantinho do Céu · São Paulo</p>
+    <h1 class="hero-kinetic">
+      <span id="heroTitleMain"><span class="line"><span class="w">Sushi</span> <span class="w">de</span> <span class="w">verdade,</span></span><span class="line"><span class="w">feito</span> <span class="w">com</span></span></span>
+      <span id="heroTitleAccent" class="stroke"><span class="line"><span class="w">alma</span> <span class="w">japonesa.</span></span></span>
+    </h1>
+    <p class="hero-lead reveal" id="heroLeadText">Temakis generosos, combinados fartos e o frescor do salmão em cada peça. Peça pelo WhatsApp e receba em casa.</p>
+    <div class="hero-actions reveal">
+      <a href="https://wa.me/5511987856060?text=Ol%C3%A1!%20Gostaria%20de%20fazer%20um%20pedido%20no%20Edson%20Sushi." target="_blank" rel="noopener" class="btn btn-primary" data-cursor="hover">
         <i class="bi bi-whatsapp"></i> Pedir pelo WhatsApp
       </a>
-      <a href="#cardapio" class="btn btn-ghost">Ver cardápio completo</a>
+      <a href="#cardapio" class="btn btn-ghost" data-cursor="hover">Ver cardápio completo</a>
     </div>
 
-    <div class="hero-stats">
-      <div><strong>+90</strong><span>itens no cardápio</span></div>
-      <div><strong>4.9</strong><span>satisfação dos clientes</span></div>
-      <div><strong>30–60</strong><span>min de entrega</span></div>
+    <div class="hero-stats reveal">
+      <div><strong data-count="90" data-prefix="+">0</strong><span>itens no cardápio</span></div>
+      <div><strong data-count="4.9">0</strong><span>satisfação dos clientes</span></div>
+      <div><strong class="static">30–60</strong><span>min de entrega</span></div>
     </div>
   </div>
 
+  <div class="hero-index">01 <span>/</span> 06</div>
   <div class="hero-scroll"><span>role para explorar</span><i class="bi bi-arrow-down"></i></div>
 </section>
 
@@ -99,38 +104,50 @@
 <!-- ===== SOBRE / DIFERENCIAIS ===== -->
 <section class="about" id="sobre">
   <div class="container">
-    <div class="section-head">
+    <div class="section-head reveal">
       <p class="eyebrow"><i class="bi bi-sparkle"></i> Nossa essência</p>
       <h2>Por que pedir no <span>Edson Sushi</span></h2>
     </div>
 
     <div class="about-grid">
-      <div class="about-lead">
+      <div class="about-lead reveal">
         <p id="aboutLeadText">Há anos servindo o Cantinho do Céu com sushis preparados na hora, ingredientes selecionados e aquele capricho de quem trata cada pedido como se fosse para a própria família. Do temaki clássico aos combinados para dividir, tudo pensado para chegar fresquinho até você.</p>
       </div>
 
-      <div class="feature-cards">
-        <div class="feature-card reveal">
+      <ul class="feature-list">
+        <li class="feature-row reveal">
+          <span class="feature-num">01</span>
+          <div class="feature-text">
+            <h3>Ingredientes frescos</h3>
+            <p>Salmão selecionado e preparo no mesmo dia, sem congelados de última hora.</p>
+          </div>
           <i class="bi bi-egg-fried"></i>
-          <h3>Ingredientes frescos</h3>
-          <p>Salmão selecionado e preparo no mesmo dia, sem congelados de última hora.</p>
-        </div>
-        <div class="feature-card reveal">
+        </li>
+        <li class="feature-row reveal">
+          <span class="feature-num">02</span>
+          <div class="feature-text">
+            <h3>Entrega rápida</h3>
+            <p>Delivery próprio calculado por distância, direto no seu endereço.</p>
+          </div>
           <i class="bi bi-lightning-charge"></i>
-          <h3>Entrega rápida</h3>
-          <p>Delivery próprio calculado por distância, direto no seu endereço.</p>
-        </div>
-        <div class="feature-card reveal">
+        </li>
+        <li class="feature-row reveal">
+          <span class="feature-num">03</span>
+          <div class="feature-text">
+            <h3>Porções generosas</h3>
+            <p>Combinados robustos, feitos para compartilhar com quem você ama.</p>
+          </div>
           <i class="bi bi-hand-thumbs-up"></i>
-          <h3>Porções generosas</h3>
-          <p>Combinados robustos, feitos para compartilhar com quem você ama.</p>
-        </div>
-        <div class="feature-card reveal">
+        </li>
+        <li class="feature-row reveal">
+          <span class="feature-num">04</span>
+          <div class="feature-text">
+            <h3>Pedido facilitado</h3>
+            <p>Cardápio completo e pagamento via Pix, cartão ou dinheiro na entrega.</p>
+          </div>
           <i class="bi bi-whatsapp"></i>
-          <h3>Pedido facilitado</h3>
-          <p>Cardápio completo e pagamento via Pix, cartão ou dinheiro na entrega.</p>
-        </div>
-      </div>
+        </li>
+      </ul>
     </div>
   </div>
 </section>
@@ -192,36 +209,45 @@
 <!-- ===== DELIVERY / PAGAMENTO ===== -->
 <section class="delivery" id="delivery">
   <div class="container">
-    <div class="section-head light">
+    <div class="section-head light reveal">
       <p class="eyebrow"><i class="bi bi-scooter"></i> Como funciona</p>
       <h2>Delivery <span>simples</span> e transparente</h2>
     </div>
 
-    <div class="delivery-grid">
-      <div class="delivery-card">
-        <i class="bi bi-cash-coin"></i>
-        <h3>Pedido mínimo</h3>
-        <p class="big">R$ 18,00</p>
-        <p>Valor mínimo para pedidos com entrega.</p>
+    <div class="delivery-sticky-grid">
+      <div class="delivery-sticky-col">
+        <div class="delivery-sticky-inner">
+          <span class="delivery-chapter-num" id="deliveryChapterNum">01</span>
+          <span class="delivery-chapter-label" id="deliveryChapterLabel">Pedido mínimo</span>
+        </div>
       </div>
 
-      <div class="delivery-card">
-        <i class="bi bi-credit-card-2-front"></i>
-        <h3>Formas de pagamento</h3>
-        <ul class="payment-list">
-          <li><i class="bi bi-cash"></i> Dinheiro</li>
-          <li><i class="bi bi-credit-card"></i> Crédito</li>
-          <li><i class="bi bi-credit-card-2-back"></i> Débito</li>
-          <li><i class="bi bi-qr-code"></i> Pix</li>
-        </ul>
-      </div>
+      <div class="delivery-chapters">
+        <div class="delivery-chapter" data-chapter="01" data-label="Pedido mínimo">
+          <i class="bi bi-cash-coin"></i>
+          <h3>Pedido mínimo</h3>
+          <p class="big">R$ 18,00</p>
+          <p>Valor mínimo para pedidos com entrega.</p>
+        </div>
 
-      <div class="delivery-card wide">
-        <i class="bi bi-signpost-split"></i>
-        <h3>Taxa de entrega por distância</h3>
-        <table class="fee-table">
-          <tbody id="feeTable"></tbody>
-        </table>
+        <div class="delivery-chapter" data-chapter="02" data-label="Formas de pagamento">
+          <i class="bi bi-credit-card-2-front"></i>
+          <h3>Formas de pagamento</h3>
+          <ul class="payment-list">
+            <li><i class="bi bi-cash"></i> Dinheiro</li>
+            <li><i class="bi bi-credit-card"></i> Crédito</li>
+            <li><i class="bi bi-credit-card-2-back"></i> Débito</li>
+            <li><i class="bi bi-qr-code"></i> Pix</li>
+          </ul>
+        </div>
+
+        <div class="delivery-chapter" data-chapter="03" data-label="Taxa por distância">
+          <i class="bi bi-signpost-split"></i>
+          <h3>Taxa de entrega por distância</h3>
+          <table class="fee-table">
+            <tbody id="feeTable"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -542,6 +568,8 @@
 
 <!-- Supabase (usado pelo painel de super admin — opcional pro site funcionar) -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<!-- Lenis (scroll suave com momentum) — puramente decorativo, o site funciona normalmente sem ele -->
+<script src="https://unpkg.com/lenis@1.1.14/dist/lenis.min.js"></script>
 
 <script src="js/menu-data.js"></script>
 <script src="js/supabase-config.js"></script>
@@ -550,5 +578,6 @@
 <script src="js/auth.js"></script>
 <script src="js/cart.js"></script>
 <script src="js/main.js"></script>
+<script src="js/scroll-fx.js"></script>
 </body>
 </html>

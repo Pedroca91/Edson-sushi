@@ -29,3 +29,6 @@ if (SUPABASE_IS_CONFIGURED && window.supabase) {
     console.warn('Falha ao iniciar o Supabase:', e);
   }
 }
+// "let" no topo de um <script> comum não vira propriedade de "window" (diferente de
+// "var") — expõe explicitamente pra quem checa "window.supabaseClient" (admin.js, auth.js).
+window.supabaseClient = supabaseClient;
