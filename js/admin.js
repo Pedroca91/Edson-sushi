@@ -73,10 +73,12 @@ document.addEventListener('DOMContentLoaded', () => {
 async function initDashboard() {
   await loadSettingsIntoForm();
   await loadCategoriesIntoUI();
+  await loadCouponsIntoUI();
   wireSettingsForm();
   wireMenuPanel();
   wireImportPanel();
   wireItemModal();
+  wireCouponsPanel();
 }
 
 /* ============================================
@@ -347,6 +349,94 @@ function wireMenuPanel() {
 }
 
 /* ============================================
+   PAINEL: CUPONS
+   ============================================ */
+let coupons = [];
+
+async function loadCouponsIntoUI() {
+  try {
+    coupons = await AdminAPI.listCoupons();
+  } catch (e) {
+    coupons = [];
+  }
+  renderCoupons();
+}
+
+function renderCoupons() {
+  const wrap = document.getElementById('couponsWrap');
+  if (coupons.length === 0) {
+    wrap.innerHTML = `<p style="color:var(--text-dim);font-size:14px;">Nenhum cupom criado ainda.</p>`;
+    return;
+  }
+  wrap.innerHTML = coupons.map(c => `
+    <div class="admin-cat-card" data-code="${c.code}">
+      <div class="admin-cat-head" style="cursor:default;">
+        <div class="admin-cat-head-left">
+          <strong style="font-family:var(--font-display);font-size:17px;">${c.code}</strong>
+          <span class="admin-cat-count">
+            ${c.type === 'percent' ? c.value + '% off' : 'R$ ' + Number(c.value).toFixed(2).replace('.', ',') + ' off'}
+            ${c.min_order ? ' · pedido mín. R$ ' + Number(c.min_order).toFixed(2).replace('.', ',') : ''}
+            ${c.active ? '' : ' · <span style="color:var(--red);">inativo</span>'}
+          </span>
+        </div>
+        <div class="admin-cat-actions">
+          <button type="button" class="cpn-toggle" title="${c.active ? 'Desativar' : 'Ativar'}"><i class="bi ${c.active ? 'bi-toggle-on' : 'bi-toggle-off'}"></i></button>
+          <button type="button" class="cpn-delete danger" title="Excluir"><i class="bi bi-trash3"></i></button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function wireCouponsPanel() {
+  document.getElementById('addCouponBtn').addEventListener('click', async () => {
+    const code = document.getElementById('cpnCode').value.trim().toUpperCase();
+    const type = document.getElementById('cpnType').value;
+    const value = parseFloat(document.getElementById('cpnValue').value);
+    const minOrder = parseFloat(document.getElementById('cpnMinOrder').value) || 0;
+
+    if (!code) { Toast.show('Informe o código do cupom.', true); return; }
+    if (!value || value <= 0) { Toast.show('Informe um valor de desconto válido.', true); return; }
+
+    try {
+      await AdminAPI.saveCoupon({ code, type, value, min_order: minOrder, active: true });
+      Toast.show('Cupom criado!');
+      document.getElementById('cpnCode').value = '';
+      document.getElementById('cpnValue').value = '';
+      document.getElementById('cpnMinOrder').value = '';
+      await loadCouponsIntoUI();
+    } catch (e) {
+      Toast.show('Erro ao criar cupom: ' + e.message, true);
+    }
+  });
+
+  document.getElementById('couponsWrap').addEventListener('click', async (e) => {
+    const card = e.target.closest('.admin-cat-card');
+    if (!card) return;
+    const code = card.dataset.code;
+    const coupon = coupons.find(c => c.code === code);
+
+    if (e.target.closest('.cpn-toggle')) {
+      try {
+        await AdminAPI.saveCoupon({ ...coupon, active: !coupon.active });
+        Toast.show(coupon.active ? 'Cupom desativado.' : 'Cupom ativado.');
+        await loadCouponsIntoUI();
+      } catch (err) { Toast.show('Erro: ' + err.message, true); }
+      return;
+    }
+    if (e.target.closest('.cpn-delete')) {
+      if (!confirm(`Excluir o cupom "${code}"?`)) return;
+      try {
+        await AdminAPI.deleteCoupon(code);
+        Toast.show('Cupom excluído.');
+        await loadCouponsIntoUI();
+      } catch (err) { Toast.show('Erro: ' + err.message, true); }
+      return;
+    }
+  });
+}
+
+/* ============================================
    MODAL DE ITEM
    ============================================ */
 function openItemModal(catDocId, itemId) {
@@ -366,8 +456,32 @@ function openItemModal(catDocId, itemId) {
   document.getElementById('itFoto').value = '';
   document.getElementById('itFotoPreview').innerHTML = item && item.img ? `<img src="${item.img}">` : '';
 
+  const hasOptions = !!(item && item.hasOptions);
+  document.getElementById('itHasOptions').checked = hasOptions;
+  document.getElementById('itOptionLabel').value = item && item.optionLabel ? item.optionLabel : '';
+  document.getElementById('itOptionsBlock').style.display = hasOptions ? 'block' : 'none';
+  renderOptionChoiceRows(item && item.optionChoices ? item.optionChoices : []);
+
   document.getElementById('itemModalOverlay').classList.add('open');
   document.body.classList.add('lock-scroll');
+}
+
+function renderOptionChoiceRows(choices) {
+  const wrap = document.getElementById('itOptionChoices');
+  wrap.innerHTML = '';
+  (choices.length ? choices : ['']).forEach(addOptionChoiceRow);
+}
+
+function addOptionChoiceRow(value = '') {
+  const wrap = document.getElementById('itOptionChoices');
+  const row = document.createElement('div');
+  row.className = 'admin-row';
+  row.innerHTML = `
+    <input type="text" class="option-choice-input" placeholder="Ex: Cru" value="${value}">
+    <button type="button" class="row-remove"><i class="bi bi-trash3"></i></button>
+  `;
+  row.querySelector('.row-remove').addEventListener('click', () => row.remove());
+  wrap.appendChild(row);
 }
 
 function closeItemModal() {
@@ -392,6 +506,11 @@ function wireItemModal() {
     reader.readAsDataURL(file);
   });
 
+  document.getElementById('itHasOptions').addEventListener('change', (e) => {
+    document.getElementById('itOptionsBlock').style.display = e.target.checked ? 'block' : 'none';
+  });
+  document.getElementById('addOptionChoice').addEventListener('click', () => addOptionChoiceRow());
+
   document.getElementById('itemForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     const saveBtn = document.getElementById('itSaveBtn');
@@ -415,6 +534,17 @@ function wireItemModal() {
       const precoVal = document.getElementById('itPreco').value;
       const promoVal = document.getElementById('itPromo').value;
 
+      const hasOptions = document.getElementById('itHasOptions').checked;
+      const optionChoices = [...document.querySelectorAll('.option-choice-input')]
+        .map(inp => inp.value.trim())
+        .filter(Boolean);
+      if (hasOptions && optionChoices.length === 0) {
+        Toast.show('Adicione pelo menos uma opção de escolha, ou desmarque a opção.', true);
+        saveBtn.disabled = false;
+        saveBtn.textContent = 'Salvar produto';
+        return;
+      }
+
       const newItem = {
         id: editingItemId || AdminAPI.genId('itm'),
         n: nome,
@@ -422,7 +552,10 @@ function wireItemModal() {
         v: precoVal ? parseFloat(precoVal) : null,
         promo: promoVal ? parseFloat(promoVal) : null,
         img: imgUrl,
-        featured: document.getElementById('itFeatured').checked
+        featured: document.getElementById('itFeatured').checked,
+        hasOptions,
+        optionLabel: hasOptions ? document.getElementById('itOptionLabel').value.trim() || 'Escolha uma opção' : '',
+        optionChoices: hasOptions ? optionChoices : []
       };
 
       let newItems;

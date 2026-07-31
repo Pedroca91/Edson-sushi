@@ -9,7 +9,9 @@ const Cart = (() => {
 
   let checkoutAddress = null;   // endereço confirmado nesta sessão de checkout
   let checkoutPayment = null;   // forma de pagamento escolhida
+  let appliedCoupon = null;     // { code, type, value, min_order } já validado
   let currentStep = 1;
+  let pendingOptionItemId = null; // item aguardando escolha no modal de opção
 
   /* ---------------- Cálculo de taxa por distância (KM real) ---------------- */
   function haversineKm(lat1, lon1, lat2, lon2) {
@@ -70,9 +72,17 @@ const Cart = (() => {
     return { ok: true, km, fee: tier ? tier.value : null };
   }
 
+  // desconto do cupom aplicado (percentual ou valor fixo, nunca deixa o total negativo)
+  function discountAmount() {
+    if (!appliedCoupon) return 0;
+    const sub = subtotal();
+    const raw = appliedCoupon.type === 'percent' ? sub * (appliedCoupon.value / 100) : appliedCoupon.value;
+    return Math.min(raw, sub);
+  }
+
   function total() {
     const fee = (checkoutAddress && checkoutAddress.fee != null) ? checkoutAddress.fee : 0;
-    return subtotal() + fee;
+    return Math.max(0, subtotal() - discountAmount()) + fee;
   }
 
   /* ---------------- Storage ---------------- */
@@ -82,30 +92,41 @@ const Cart = (() => {
   };
   const saveCart = (cart) => localStorage.setItem(CART_KEY, JSON.stringify(cart));
 
-  function add(id, qty = 1) {
+  // itens com opção de escolha (ex: sabor) viram uma linha própria no carrinho
+  // por combinação de produto+escolha - assim "Hot Roll (Cru)" e "Hot Roll (Frito)"
+  // não se misturam numa linha só.
+  const cartKey = (id, choice) => choice ? `${id}::${encodeURIComponent(choice)}` : id;
+  const parseCartKey = (key) => {
+    const i = key.indexOf('::');
+    return i === -1 ? { id: key, choice: null } : { id: key.slice(0, i), choice: decodeURIComponent(key.slice(i + 2)) };
+  };
+
+  function add(id, qty = 1, choice = null) {
     const cart = getCart();
-    cart[id] = (cart[id] || 0) + qty;
+    const key = cartKey(id, choice);
+    cart[key] = (cart[key] || 0) + qty;
     saveCart(cart);
     renderBadge();
   }
-  function setQty(id, qty) {
+  function setQty(key, qty) {
     const cart = getCart();
-    if (qty <= 0) delete cart[id];
-    else cart[id] = qty;
+    if (qty <= 0) delete cart[key];
+    else cart[key] = qty;
     saveCart(cart);
     renderBadge();
     renderCartView();
   }
-  function remove(id) { setQty(id, 0); }
-  function clear() { saveCart({}); renderBadge(); }
+  function remove(key) { setQty(key, 0); }
+  function clear() { saveCart({}); appliedCoupon = null; renderBadge(); }
 
   function getLines() {
     const cart = getCart();
-    return Object.keys(cart).map(id => {
+    return Object.keys(cart).map(key => {
+      const { id, choice } = parseCartKey(key);
       const item = window.ITEM_INDEX ? window.ITEM_INDEX[id] : null;
       if (!item) return null;
       const unit = item.promo || item.v || 0;
-      return { id, item, qty: cart[id], unit, total: unit * cart[id] };
+      return { key, id, choice, item, qty: cart[key], unit, total: unit * cart[key] };
     }).filter(Boolean);
   }
   function count() { return getLines().reduce((s, l) => s + l.qty, 0); }
@@ -204,32 +225,82 @@ const Cart = (() => {
     }
 
     wrap.innerHTML = lines.map(l => `
-      <div class="cart-line" data-id="${l.id}">
+      <div class="cart-line" data-key="${l.key}">
         ${l.item.img
           ? `<div class="thumb"><img src="${l.item.img}" alt="${l.item.n}"></div>`
           : `<div class="no-thumb"><i class="bi bi-egg-fried"></i></div>`}
         <div class="cart-line-body">
           <div class="cart-line-top">
-            <h4>${l.item.n}</h4>
-            <button class="cart-line-remove" data-remove="${l.id}"><i class="bi bi-trash3"></i></button>
+            <h4>${l.item.n}${l.choice ? ` <span style="color:var(--text-faint);font-weight:500;">(${l.choice})</span>` : ''}</h4>
+            <button class="cart-line-remove" data-remove="${l.key}"><i class="bi bi-trash3"></i></button>
           </div>
           <div class="cart-line-price">R$ ${fmt(l.unit)} / un.</div>
           <div class="qty-stepper">
-            <button data-dec="${l.id}"><i class="bi bi-dash"></i></button>
+            <button data-dec="${l.key}"><i class="bi bi-dash"></i></button>
             <span>${l.qty}</span>
-            <button data-inc="${l.id}"><i class="bi bi-plus"></i></button>
+            <button data-inc="${l.key}"><i class="bi bi-plus"></i></button>
           </div>
         </div>
         <div class="cart-line-total">R$ ${fmt(l.total)}</div>
       </div>
     `).join('') + `
       <div class="summary-row" style="margin-top:14px;"><span>Subtotal</span><span>R$ ${fmt(subtotal())}</span></div>
+      ${appliedCoupon ? `<div class="summary-row"><span>Cupom ${appliedCoupon.code}</span><span>- R$ ${fmt(discountAmount())}</span></div>` : ''}
       <div class="summary-row"><span>Taxa de entrega</span><span>calculada no próximo passo</span></div>
     `;
 
-    document.getElementById('drawerTotal').textContent = 'R$ ' + fmt(subtotal());
+    document.getElementById('drawerTotal').textContent = 'R$ ' + fmt(subtotal() - discountAmount());
     const actionBtn = document.getElementById('drawerActionBtn');
     if (actionBtn) actionBtn.disabled = false;
+
+    renderCouponStatus();
+  }
+
+  /* ---------------- Cupom ---------------- */
+  function renderCouponStatus() {
+    const el = document.getElementById('couponStatus');
+    if (!el) return;
+    if (appliedCoupon) {
+      el.className = 'ok';
+      el.innerHTML = `<i class="bi bi-check-circle"></i> Cupom ${appliedCoupon.code} aplicado.`;
+    } else {
+      el.className = '';
+      el.innerHTML = '';
+    }
+  }
+
+  async function applyCoupon() {
+    const input = document.getElementById('couponInput');
+    const code = input.value.trim().toUpperCase();
+    const statusEl = document.getElementById('couponStatus');
+    if (!code) return;
+
+    if (!window.getActiveCoupon) {
+      statusEl.className = 'err';
+      statusEl.innerHTML = '<i class="bi bi-exclamation-circle"></i> Não foi possível validar o cupom agora.';
+      return;
+    }
+
+    statusEl.className = '';
+    statusEl.innerHTML = 'Verificando...';
+    const coupon = await window.getActiveCoupon(code);
+
+    // em falha, mantém qualquer cupom já aplicado antes intacto (não zera silenciosamente
+    // um desconto válido só porque uma tentativa seguinte deu errado).
+    if (!coupon) {
+      statusEl.className = 'err';
+      statusEl.innerHTML = '<i class="bi bi-exclamation-circle"></i> Cupom inválido ou expirado.';
+      return;
+    }
+    if (coupon.min_order && subtotal() < coupon.min_order) {
+      statusEl.className = 'err';
+      statusEl.innerHTML = `<i class="bi bi-exclamation-circle"></i> Pedido mínimo de R$ ${fmt(coupon.min_order)} pra usar esse cupom.`;
+      return;
+    }
+
+    appliedCoupon = coupon;
+    input.value = '';
+    renderCartView();
   }
 
   /* ---------------- STEP 2: Address ---------------- */
@@ -443,7 +514,8 @@ const Cart = (() => {
       <div class="review-block">
         <h4>Itens (${lines.reduce((s,l)=>s+l.qty,0)})</h4>
         <div class="review-items">
-          ${lines.map(l => `<div class="review-item"><span>${l.qty}x ${l.item.n}</span><span>R$ ${fmt(l.total)}</span></div>`).join('')}
+          ${lines.map(l => `<div class="review-item"><span>${l.qty}x ${l.item.n}${l.choice ? ' (' + l.choice + ')' : ''}</span><span>R$ ${fmt(l.total)}</span></div>`).join('')}
+          ${appliedCoupon ? `<div class="review-item"><span>Cupom ${appliedCoupon.code}</span><span>- R$ ${fmt(discountAmount())}</span></div>` : ''}
         </div>
       </div>
       <div class="review-block">
@@ -480,16 +552,17 @@ const Cart = (() => {
     msg += `------------------------------\n`;
     msg += `*Itens do pedido:*\n`;
     lines.forEach(l => {
-      msg += `${l.qty}x ${l.item.n} — R$ ${fmt(l.unit)} (un.) = R$ ${fmt(l.total)}\n`;
+      msg += `${l.qty}x ${l.item.n}${l.choice ? ' (' + l.choice + ')' : ''} — R$ ${fmt(l.unit)} (un.) = R$ ${fmt(l.total)}\n`;
     });
     msg += `------------------------------\n`;
     msg += `*Subtotal:* R$ ${fmt(subtotal())}\n`;
+    if (appliedCoupon) msg += `*Cupom ${appliedCoupon.code}:* - R$ ${fmt(discountAmount())}\n`;
     if (checkoutAddress.fee != null) {
       msg += `*Taxa de entrega:* R$ ${fmt(checkoutAddress.fee)} (${checkoutAddress.feeNote})\n`;
       msg += `*Total do pedido:* R$ ${fmt(total())}\n`;
     } else {
       msg += `*Taxa de entrega:* a combinar com a loja (${checkoutAddress.feeNote || 'distância não calculada'})\n`;
-      msg += `*Total do pedido (sem taxa):* R$ ${fmt(subtotal())}\n`;
+      msg += `*Total do pedido (sem taxa):* R$ ${fmt(Math.max(0, subtotal() - discountAmount()))}\n`;
     }
     msg += `*Forma de pagamento:* ${checkoutPayment}\n`;
     if (checkoutPayment === 'Dinheiro' && troco) msg += `*Troco para:* ${troco}\n`;
@@ -521,21 +594,49 @@ const Cart = (() => {
     Toast.show('Pedido pronto! Confira o WhatsApp e envie a mensagem para confirmar com a loja.');
   }
 
+  /* ---------------- Opção de escolha do produto (ex: sabor) ---------------- */
+  function openOptionPicker(id, onAdded) {
+    const item = window.ITEM_INDEX[id];
+    pendingOptionItemId = id;
+    document.getElementById('optionItemName').textContent = item.n;
+    document.getElementById('optionLabel').textContent = item.optionLabel || 'Escolha uma opção';
+    document.getElementById('optionChoices').innerHTML = (item.optionChoices || [])
+      .map(c => `<button type="button" class="option-choice-btn" data-choice="${c}">${c}</button>`).join('');
+    document.getElementById('optionOverlay').classList.add('open');
+    document.body.classList.add('lock-scroll');
+    document.getElementById('optionOverlay').dataset.onAdded = onAdded ? 'drawer' : '';
+  }
+  function closeOptionPicker() {
+    document.getElementById('optionOverlay').classList.remove('open');
+    document.body.classList.remove('lock-scroll');
+    pendingOptionItemId = null;
+  }
+
   /* ---------------- Public add-to-cart handler (com gate de login) ---------------- */
   function handleAddToCart(id) {
     if (!window.ITEM_INDEX || !window.ITEM_INDEX[id]) return;
+    const item = window.ITEM_INDEX[id];
 
     if (!Auth.getCurrentUser()) {
       Auth.openModal('login', () => {
-        add(id, 1);
-        Toast.show('Item adicionado! Continue montando seu pedido.');
-        openDrawer(1);
+        if (item.hasOptions && (item.optionChoices || []).length) {
+          openOptionPicker(id, true);
+        } else {
+          add(id, 1);
+          Toast.show('Item adicionado! Continue montando seu pedido.');
+          openDrawer(1);
+        }
       });
       return;
     }
 
+    if (item.hasOptions && (item.optionChoices || []).length) {
+      openOptionPicker(id, false);
+      return;
+    }
+
     add(id, 1);
-    Toast.show(`${window.ITEM_INDEX[id].n} adicionado ao carrinho.`);
+    Toast.show(`${item.n} adicionado ao carrinho.`);
   }
 
   /* ---------------- Wiring geral ---------------- */
@@ -552,8 +653,34 @@ const Cart = (() => {
       openDrawer(1);
     });
 
-    // delegação de eventos para botões "adicionar", "+", "-", "remover"
+    document.getElementById('optionClose').addEventListener('click', closeOptionPicker);
+    document.getElementById('optionOverlay').addEventListener('click', (e) => {
+      if (e.target.id === 'optionOverlay') closeOptionPicker();
+    });
+
+    document.getElementById('couponApplyBtn').addEventListener('click', applyCoupon);
+    document.getElementById('couponInput').addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); applyCoupon(); }
+    });
+
+    // delegação de eventos para botões "adicionar", "+", "-", "remover", escolha de opção
     document.addEventListener('click', (e) => {
+      const choiceBtn = e.target.closest('.option-choice-btn');
+      if (choiceBtn && pendingOptionItemId) {
+        const id = pendingOptionItemId;
+        const goToDrawer = document.getElementById('optionOverlay').dataset.onAdded === 'drawer';
+        const item = window.ITEM_INDEX[id];
+        add(id, 1, choiceBtn.dataset.choice);
+        closeOptionPicker();
+        if (goToDrawer) {
+          Toast.show('Item adicionado! Continue montando seu pedido.');
+          openDrawer(1);
+        } else {
+          Toast.show(`${item.n} (${choiceBtn.dataset.choice}) adicionado ao carrinho.`);
+        }
+        return;
+      }
+
       const addBtn = e.target.closest('[data-add]');
       if (addBtn) { handleAddToCart(addBtn.dataset.add); return; }
 

@@ -57,6 +57,7 @@
     <nav class="admin-nav">
       <button class="admin-nav-btn active" data-panel="panel-settings"><i class="bi bi-sliders"></i> Configurações</button>
       <button class="admin-nav-btn" data-panel="panel-menu"><i class="bi bi-journal-text"></i> Cardápio</button>
+      <button class="admin-nav-btn" data-panel="panel-coupons"><i class="bi bi-ticket-perforated"></i> Cupons</button>
       <button class="admin-nav-btn" data-panel="panel-import"><i class="bi bi-cloud-arrow-up"></i> Importar dados</button>
     </nav>
     <a href="index.html" class="admin-view-site" target="_blank"><i class="bi bi-box-arrow-up-right"></i> Ver site</a>
@@ -185,6 +186,42 @@
       <div id="categoriesWrap" class="admin-categories"></div>
     </section>
 
+    <!-- ---------------- PAINEL: CUPONS ---------------- -->
+    <section class="admin-panel" id="panel-coupons">
+      <h2>Cupons de desconto</h2>
+      <p class="admin-sub">Crie códigos que os clientes digitam no carrinho pra ganhar desconto. Desative em vez de excluir se quiser pausar um cupom sem perder o histórico.</p>
+
+      <div class="admin-card">
+        <h3>Novo cupom</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Código</label>
+            <input type="text" id="cpnCode" placeholder="Ex: BEMVINDO10" style="text-transform:uppercase;">
+          </div>
+          <div class="form-group">
+            <label>Tipo</label>
+            <select id="cpnType">
+              <option value="percent">Porcentagem (%)</option>
+              <option value="fixed">Valor fixo (R$)</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Valor</label>
+            <input type="number" step="0.01" id="cpnValue" placeholder="Ex: 10">
+          </div>
+          <div class="form-group">
+            <label>Pedido mínimo (R$, opcional)</label>
+            <input type="number" step="0.01" id="cpnMinOrder" placeholder="0">
+          </div>
+        </div>
+        <button class="btn btn-primary" id="addCouponBtn"><i class="bi bi-plus-lg"></i> Criar cupom</button>
+      </div>
+
+      <div id="couponsWrap" class="admin-categories"></div>
+    </section>
+
     <!-- ---------------- PAINEL: IMPORTAR ---------------- -->
     <section class="admin-panel" id="panel-import">
       <h2>Importar dados iniciais</h2>
@@ -238,6 +275,22 @@
       <div class="form-group">
         <label><input type="checkbox" id="itFeatured" style="width:auto;margin-right:8px;"> Mostrar nos destaques da home</label>
       </div>
+
+      <div class="form-group">
+        <label><input type="checkbox" id="itHasOptions" style="width:auto;margin-right:8px;"> Este produto tem opção de escolha (ex: sabor, tipo de preparo)</label>
+      </div>
+      <div id="itOptionsBlock" style="display:none;">
+        <div class="form-group">
+          <label>Pergunta mostrada pro cliente</label>
+          <input type="text" id="itOptionLabel" placeholder="Ex: Escolha o temaki">
+        </div>
+        <div class="form-group">
+          <label>Opções (uma por linha)</label>
+          <div id="itOptionChoices"></div>
+          <button type="button" class="btn btn-outline btn-sm" id="addOptionChoice" style="margin-top:8px;"><i class="bi bi-plus"></i> Adicionar opção</button>
+        </div>
+      </div>
+
       <button type="submit" class="btn btn-primary btn-block" id="itSaveBtn">Salvar produto</button>
     </form>
   </div>

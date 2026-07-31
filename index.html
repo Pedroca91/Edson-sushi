@@ -531,6 +531,19 @@
   </div>
 </div>
 
+<!-- ===== OPÇÃO DE ESCOLHA DO PRODUTO (ex: sabor) ===== -->
+<div class="overlay" id="optionOverlay">
+  <div class="modal">
+    <button class="modal-close" id="optionClose" aria-label="Fechar"><i class="bi bi-x-lg"></i></button>
+    <div class="modal-head">
+      <p class="eyebrow"><i class="bi bi-egg-fried"></i> Antes de adicionar</p>
+      <h3 id="optionItemName"></h3>
+      <p id="optionLabel"></p>
+    </div>
+    <div class="option-choices" id="optionChoices"></div>
+  </div>
+</div>
+
 <!-- ===== CART DRAWER ===== -->
 <div class="drawer-overlay" id="cartOverlay">
   <aside class="cart-drawer">
@@ -545,6 +558,11 @@
       <!-- STEP 1: CART -->
       <div class="drawer-view active" id="viewCart">
         <div id="cartItemsWrap"></div>
+        <div class="coupon-row">
+          <input type="text" id="couponInput" placeholder="Cupom de desconto" style="text-transform:uppercase;">
+          <button type="button" class="btn btn-outline btn-sm" id="couponApplyBtn">Aplicar</button>
+        </div>
+        <div id="couponStatus"></div>
       </div>
 
       <!-- STEP 2: ADDRESS -->

@@ -109,6 +109,38 @@ async function uploadProductImage(file) {
   return data.publicUrl;
 }
 
+/* ---------------- Cupons ---------------- */
+async function listCoupons() {
+  const client = sb();
+  if (!client) return [];
+  const { data, error } = await client.from('coupons').select('*').order('created_at', { ascending: false });
+  if (error || !data) return [];
+  return data;
+}
+
+async function saveCoupon(coupon) {
+  const client = sb();
+  if (!client) throw new Error('Supabase não configurado.');
+  const { error } = await client.from('coupons').upsert(coupon);
+  if (error) throw error;
+}
+
+async function deleteCoupon(code) {
+  const client = sb();
+  if (!client) throw new Error('Supabase não configurado.');
+  const { error } = await client.from('coupons').delete().eq('code', code);
+  if (error) throw error;
+}
+
+// usado pelo site público (chave anon) pra validar um cupom digitado no carrinho
+async function getActiveCoupon(code) {
+  const client = sb();
+  if (!client) return null;
+  const { data } = await client.from('coupons').select('*').eq('code', code.toUpperCase().trim()).eq('active', true).maybeSingle();
+  return data || null;
+}
+window.getActiveCoupon = getActiveCoupon;
+
 /* ---------------- Importação inicial (migra js/menu-data.js pro Supabase) ---------------- */
 async function seedInitialData() {
   const client = sb();
@@ -138,6 +170,9 @@ window.AdminAPI = {
   saveItemInCategory,
   uploadProductImage,
   seedInitialData,
+  listCoupons,
+  saveCoupon,
+  deleteCoupon,
   genId,
   isConfigured: () => !!supabaseClient
 };
