@@ -43,7 +43,7 @@ window.loadSiteData = async function () {
     .order('order', { ascending: true });
   if (cats && cats.length) {
     const liveMenu = cats.map(c => ({
-      cat: c.cat, icon: c.icon, sub: c.sub, order: c.order,
+      cat: c.cat, icon: c.icon, sub: c.sub, order: c.order, hidden: !!c.hidden,
       items: c.items || [], _docId: c.id
     }));
     MENU.length = 0;
@@ -73,7 +73,7 @@ async function listCategories() {
   const { data, error } = await client.from('categories').select('*').order('order', { ascending: true });
   if (error || !data) return [];
   return data.map(c => ({
-    cat: c.cat, icon: c.icon, sub: c.sub, order: c.order,
+    cat: c.cat, icon: c.icon, sub: c.sub, order: c.order, hidden: !!c.hidden,
     items: c.items || [], _docId: c.id
   }));
 }

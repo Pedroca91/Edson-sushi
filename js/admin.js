@@ -628,6 +628,8 @@ async function wireSuperAdminPanel() {
     }
   });
 
+  renderCategoriesVisibility();
+
   document.getElementById('createStoreAdminBtn').addEventListener('click', async () => {
     const btn = document.getElementById('createStoreAdminBtn');
     const email = document.getElementById('saEmail').value.trim();
@@ -649,5 +651,42 @@ async function wireSuperAdminPanel() {
       btn.disabled = false;
       btn.innerHTML = '<i class="bi bi-person-plus"></i> Criar acesso da loja';
     }
+  });
+}
+
+function renderCategoriesVisibility() {
+  const wrap = document.getElementById('categoriesVisibilityWrap');
+  if (categories.length === 0) {
+    wrap.innerHTML = `<p style="color:var(--text-dim);font-size:14px;">Nenhuma categoria ainda.</p>`;
+    return;
+  }
+  wrap.innerHTML = categories.map(c => `
+    <div class="admin-row" data-doc="${c._docId}">
+      <span style="flex:1;font-weight:600;">${c.cat}</span>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-dim);">
+        <input type="checkbox" class="cat-visible-toggle" ${c.hidden ? '' : 'checked'} style="width:18px;height:18px;">
+        ${c.hidden ? 'Desativada' : 'Ativa'}
+      </label>
+    </div>
+  `).join('');
+
+  wrap.querySelectorAll('.cat-visible-toggle').forEach(chk => {
+    chk.addEventListener('change', async (e) => {
+      const row = e.target.closest('[data-doc]');
+      const docId = row.dataset.doc;
+      const cat = categories.find(c => c._docId === docId);
+      const newHidden = !e.target.checked;
+      e.target.disabled = true;
+      try {
+        await AdminAPI.saveCategory(docId, { hidden: newHidden });
+        cat.hidden = newHidden;
+        Toast.show(newHidden ? `"${cat.cat}" desativada.` : `"${cat.cat}" ativada.`);
+        renderCategoriesVisibility();
+      } catch (err) {
+        Toast.show('Erro: ' + err.message, true);
+        e.target.checked = !e.target.checked;
+        e.target.disabled = false;
+      }
+    });
   });
 }

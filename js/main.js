@@ -80,12 +80,17 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   })();
 
+  // Categorias desativadas pelo super admin (chave "Categorias do cardápio" em
+  // Super Admin) somem do site inteiro - cardápio, busca, destaques - sem
+  // apagar os dados, só ficam fora da vitrine até serem reativadas.
+  const VISIBLE_MENU = MENU.filter((c) => !c.hidden);
+
   /* ---------------- Índice de produtos (ids estáveis para o carrinho) ---------------- */
   // Itens vindos do Supabase já têm um "id" próprio e permanente.
   // Itens do fallback estático (js/menu-data.js) ganham um id baseado em
   // categoria+nome — estável mesmo se a ordem dos itens mudar.
   window.ITEM_INDEX = {};
-  MENU.forEach((c) => {
+  VISIBLE_MENU.forEach((c) => {
     c.items.forEach((item) => {
       const id = item.id || slugify(`${c.cat}-${item.n}`);
       window.ITEM_INDEX[id] = { ...item, cat: c.cat, id };
@@ -142,13 +147,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const catId = (cat) => 'panel-' + slugify(cat);
 
-  menuTabs.innerHTML = MENU.map((c, i) => `
+  menuTabs.innerHTML = VISIBLE_MENU.map((c, i) => `
     <button class="menu-tab ${i === 0 ? 'active' : ''}" data-target="${catId(c.cat)}">
       <i class="bi ${c.icon || 'bi-egg-fried'}"></i> ${c.cat}
     </button>
   `).join('');
 
-  menuPanels.innerHTML = MENU.map((c, ci) => `
+  menuPanels.innerHTML = VISIBLE_MENU.map((c, ci) => `
     <div class="menu-panel ${ci === 0 ? 'active' : ''}" id="${catId(c.cat)}">
       <div class="menu-panel-head">
         <h3>${c.cat}</h3>
