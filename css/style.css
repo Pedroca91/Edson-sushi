@@ -508,6 +508,12 @@ h2 span{ color: var(--red); font-style: italic; }
 .footer-bottom{ padding: 24px 0; }
 .footer-bottom .container{ display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px; font-size:13px; }
 .footer-bottom i{ color: var(--red); }
+.dev-credit-link{
+  color: var(--text-faint); font-weight:600; padding-bottom:1px;
+  border-bottom: 1px solid var(--line-strong);
+  transition: color .25s, border-color .25s;
+}
+.dev-credit-link:hover{ color: var(--gold-light); border-color: var(--gold-light); }
 
 /* ============================================
    FLOATING BUTTONS
