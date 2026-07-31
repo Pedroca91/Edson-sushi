@@ -268,7 +268,6 @@ const BUSINESS = {
   addressComplement: "Próximo à academia Panobianco",
   lat: -23.7424958,
   lng: -46.6618167,
-  orderUrl: "https://whatsmenu.com.br/edsonsushi",
   logo: "images/logo.png",
   minOrder: 18,
   // Textos editáveis pelo painel de admin (se vazios/ausentes, o site usa o texto
