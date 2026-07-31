@@ -59,6 +59,7 @@
       <button class="admin-nav-btn" data-panel="panel-menu"><i class="bi bi-journal-text"></i> Cardápio</button>
       <button class="admin-nav-btn" data-panel="panel-coupons"><i class="bi bi-ticket-perforated"></i> Cupons</button>
       <button class="admin-nav-btn" data-panel="panel-import"><i class="bi bi-cloud-arrow-up"></i> Importar dados</button>
+      <button class="admin-nav-btn" data-panel="panel-super" id="superAdminNavBtn" style="display:none;"><i class="bi bi-shield-lock"></i> Super Admin</button>
     </nav>
     <a href="index.html" class="admin-view-site" target="_blank"><i class="bi bi-box-arrow-up-right"></i> Ver site</a>
     <button class="admin-logout" id="logoutBtn"><i class="bi bi-box-arrow-right"></i> Sair</button>
@@ -233,6 +234,41 @@
           Se você já importou antes, isso vai duplicar as categorias — use apenas na primeira vez.
         </p>
         <button class="btn btn-gold btn-lg" id="seedBtn"><i class="bi bi-cloud-arrow-up"></i> Importar cardápio inicial para o Supabase</button>
+      </div>
+    </section>
+
+    <!-- ---------------- PAINEL: SUPER ADMIN ---------------- -->
+    <section class="admin-panel" id="panel-super">
+      <h2>Super Admin</h2>
+      <p class="admin-sub">Área restrita: só quem tem o papel de super admin vê e mexe aqui. A loja não tem acesso a nada desta página.</p>
+
+      <div class="admin-card">
+        <h3>Pedido pelo site</h3>
+        <p class="admin-hint" style="margin-bottom:16px;">
+          Quando desligado, o site vira só cardápio de vitrine: some o cadastro, o carrinho e o preço dos produtos.
+          Quando ligado, volta tudo (cliente cria conta, monta pedido, vê preço, manda pelo WhatsApp).
+        </p>
+        <label style="display:flex;align-items:center;gap:12px;font-size:15px;font-weight:600;">
+          <input type="checkbox" id="orderingToggle" style="width:20px;height:20px;">
+          Permitir pedidos pelo site
+        </label>
+      </div>
+
+      <div class="admin-card">
+        <h3>Acesso da loja</h3>
+        <p class="admin-hint" style="margin-bottom:16px;">
+          Crie aqui o login que o dono do restaurante vai usar pra entrar neste painel. Esse acesso só edita
+          configurações, cardápio e cupons - não vê nem mexe nesta página de Super Admin.
+        </p>
+        <div class="form-group">
+          <label>E-mail</label>
+          <input type="email" id="saEmail" placeholder="loja@exemplo.com">
+        </div>
+        <div class="form-group">
+          <label>Senha (mínimo 8 caracteres)</label>
+          <input type="password" id="saPassword" placeholder="••••••••">
+        </div>
+        <button class="btn btn-primary" id="createStoreAdminBtn"><i class="bi bi-person-plus"></i> Criar acesso da loja</button>
       </div>
     </section>
 

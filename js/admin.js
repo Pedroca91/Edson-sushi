@@ -79,6 +79,12 @@ async function initDashboard() {
   wireImportPanel();
   wireItemModal();
   wireCouponsPanel();
+
+  const role = await AdminAPI.getMyRole();
+  if (role === 'super_admin') {
+    document.getElementById('superAdminNavBtn').style.display = 'flex';
+    await wireSuperAdminPanel();
+  }
 }
 
 /* ============================================
@@ -600,4 +606,48 @@ function wireImportPanel() {
       btn.innerHTML = '<i class="bi bi-cloud-arrow-up"></i> Importar cardápio inicial para o Supabase';
     }
   };
+}
+
+/* ============================================
+   PAINEL: SUPER ADMIN (só visível pra quem tem esse papel)
+   ============================================ */
+async function wireSuperAdminPanel() {
+  const toggle = document.getElementById('orderingToggle');
+  toggle.checked = await AdminAPI.getOrderingEnabled();
+
+  toggle.addEventListener('change', async () => {
+    toggle.disabled = true;
+    try {
+      await AdminAPI.setOrderingEnabled(toggle.checked);
+      Toast.show(toggle.checked ? 'Pedido pelo site ligado.' : 'Pedido pelo site desligado - só cardápio agora.');
+    } catch (e) {
+      toggle.checked = !toggle.checked;
+      Toast.show('Erro: ' + e.message, true);
+    } finally {
+      toggle.disabled = false;
+    }
+  });
+
+  document.getElementById('createStoreAdminBtn').addEventListener('click', async () => {
+    const btn = document.getElementById('createStoreAdminBtn');
+    const email = document.getElementById('saEmail').value.trim();
+    const password = document.getElementById('saPassword').value;
+
+    if (!email) { Toast.show('Informe o e-mail.', true); return; }
+    if (password.length < 8) { Toast.show('A senha precisa ter no mínimo 8 caracteres.', true); return; }
+
+    btn.disabled = true;
+    btn.textContent = 'Criando...';
+    try {
+      await AdminAPI.createStoreAdmin(email, password);
+      Toast.show(`Acesso da loja criado! Repasse o e-mail e a senha pro dono do restaurante.`);
+      document.getElementById('saEmail').value = '';
+      document.getElementById('saPassword').value = '';
+    } catch (e) {
+      Toast.show('Erro ao criar acesso: ' + e.message, true);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="bi bi-person-plus"></i> Criar acesso da loja';
+    }
+  });
 }

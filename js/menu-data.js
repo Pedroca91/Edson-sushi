@@ -259,6 +259,11 @@ const MENU = [
 // no carrossel da home. Isso é controlado pelo painel de admin.
 // FEATURED é montado em tempo real por main.js a partir do MENU.
 
+// Liga/desliga pedido pelo site inteiro (cadastro, carrinho, preços). Só o
+// super admin consegue mudar isso (settings id="platform" no Supabase, com
+// RLS restrita) - sem Supabase configurado, o padrão é permitir pedidos.
+const PLATFORM = { orderingEnabled: true };
+
 const BUSINESS = {
   name: "Edson Sushi",
   tagline: "Excelência na culinária japonesa",

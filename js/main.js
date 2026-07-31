@@ -12,6 +12,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   const fmt = (v) => v == null ? null : v.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   const slugify = (s) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
 
+  // Pedido pelo site desligado (chave só do super admin, em Configurações ->
+  // Super Admin): vira cardápio de vitrine só - some cadastro, carrinho e preço.
+  const orderingOn = PLATFORM.orderingEnabled;
+  if (!orderingOn) {
+    document.getElementById('cartBtn').style.display = 'none';
+    document.getElementById('accountBtn').style.display = 'none';
+  }
+
   /* ---------------- Textos editáveis (sobrescreve o HTML padrão se vier do admin) ---------------- */
   const setTextIfPresent = (id, value) => {
     if (!value) return;
@@ -97,11 +105,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       const disponivel = item.v != null;
       return `
       <div class="dish-card reveal in">
-        ${item.promo ? '<span class="dish-badge">Oferta</span>' : ''}
+        ${orderingOn && item.promo ? '<span class="dish-badge">Oferta</span>' : ''}
         <div class="dish-img"><img src="${item.img}" alt="${item.n}" loading="lazy"></div>
         <div class="dish-body">
           <h3>${item.n}</h3>
           <p>${item.d}</p>
+          ${orderingOn ? `
           <div class="dish-price-row">
             <div class="dish-price">
               ${item.promo
@@ -109,7 +118,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                 : `<span class="now">R$ ${fmt(item.v)}</span>`}
             </div>
             ${disponivel ? `<button class="add-btn" data-add="${item.id}" aria-label="Adicionar ${item.n}"><i class="bi bi-plus-lg"></i></button>` : ''}
-          </div>
+          </div>` : ''}
         </div>
       </div>
     `; }).join('');
@@ -157,17 +166,18 @@ document.addEventListener('DOMContentLoaded', async () => {
               <div class="menu-item-text">
                 <div class="menu-item-top">
                   <h4>${item.n}</h4>
+                  ${orderingOn ? `
                   <div class="menu-item-price">
                     ${item.v == null
                       ? '<span class="ask">Consultar</span>'
                       : item.promo
                         ? `<span class="old">R$ ${fmt(item.v)}</span><span class="promo">R$ ${fmt(item.promo)}</span>`
                         : `R$ ${fmt(item.v)}`}
-                  </div>
+                  </div>` : ''}
                 </div>
                 ${item.d ? `<p class="menu-item-desc">${item.d}</p>` : ''}
               </div>
-              ${item.v != null ? `<button class="add-btn" data-add="${id}" aria-label="Adicionar ${item.n}"><i class="bi bi-plus-lg"></i></button>` : ''}
+              ${orderingOn && item.v != null ? `<button class="add-btn" data-add="${id}" aria-label="Adicionar ${item.n}"><i class="bi bi-plus-lg"></i></button>` : ''}
             </div>
           </div>
         `; }).join('')}

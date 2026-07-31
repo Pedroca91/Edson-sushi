@@ -28,6 +28,15 @@ window.loadSiteData = async function () {
     Object.assign(BUSINESS, settingsRow.data);
   }
 
+  const { data: platformRow } = await client
+    .from('settings')
+    .select('data')
+    .eq('id', 'platform')
+    .maybeSingle();
+  if (platformRow && platformRow.data) {
+    Object.assign(PLATFORM, platformRow.data);
+  }
+
   const { data: cats } = await client
     .from('categories')
     .select('*')
@@ -141,6 +150,48 @@ async function getActiveCoupon(code) {
 }
 window.getActiveCoupon = getActiveCoupon;
 
+/* ---------------- Papel do usuário logado (super_admin / store_admin) ---------------- */
+// Sem linha em admin_roles (ex.: conta antiga de antes desse sistema existir)
+// cai como store_admin por padrão - nunca destrava o painel de super admin
+// sozinho, só restringe o alcance na dúvida.
+async function getMyRole() {
+  const client = sb();
+  if (!client) return 'store_admin';
+  const { data: userData } = await client.auth.getUser();
+  if (!userData || !userData.user) return 'store_admin';
+  const { data } = await client.from('admin_roles').select('role').eq('user_id', userData.user.id).maybeSingle();
+  return data && data.role === 'super_admin' ? 'super_admin' : 'store_admin';
+}
+
+async function getOrderingEnabled() {
+  const client = sb();
+  if (!client) return true;
+  const { data } = await client.from('settings').select('data').eq('id', 'platform').maybeSingle();
+  return data && data.data ? !!data.data.orderingEnabled : false;
+}
+
+async function setOrderingEnabled(enabled) {
+  const client = sb();
+  if (!client) throw new Error('Supabase não configurado.');
+  const { error } = await client.from('settings').upsert({ id: 'platform', data: { orderingEnabled: enabled } });
+  if (error) throw error;
+}
+
+// cria o login da loja (usuário store_admin) - passa pela Edge Function
+// porque criar um usuário no Supabase Auth exige a service_role key, que
+// nunca fica no navegador. A function confere de novo, no servidor, que
+// quem está chamando é mesmo super_admin.
+async function createStoreAdmin(email, password) {
+  const client = sb();
+  if (!client) throw new Error('Supabase não configurado.');
+  const { data, error } = await client.functions.invoke('admin-manage', {
+    body: { action: 'createStoreAdmin', email, password }
+  });
+  if (error) throw new Error(error.message || 'Falha ao criar usuário.');
+  if (!data || !data.ok) throw new Error((data && data.error) || 'Falha ao criar usuário.');
+  return data;
+}
+
 /* ---------------- Importação inicial (migra js/menu-data.js pro Supabase) ---------------- */
 async function seedInitialData() {
   const client = sb();
@@ -173,6 +224,10 @@ window.AdminAPI = {
   listCoupons,
   saveCoupon,
   deleteCoupon,
+  getMyRole,
+  getOrderingEnabled,
+  setOrderingEnabled,
+  createStoreAdmin,
   genId,
   isConfigured: () => !!supabaseClient
 };
