@@ -1,11 +1,23 @@
 # Edson Sushi - Docker Compose de PRODUCAO
 # Projeto independente do Carvalho Tech Oficinas: repositorio, imagem e
-# container proprios, sem rede compartilhada. O PedroServe nao usa Traefik
-# (apesar do que os arquivos do repo das Oficinas sugerem) - o ingresso real
-# e Cloudflare Tunnel -> Nginx (host, porta 80) -> proxy_pass pra cada app em
-# 127.0.0.1:<porta>, exatamente como o app das Oficinas ja funciona em
-# 127.0.0.1:3000. Este container so publica sua porta em loopback; quem
-# roteia /edson-sushi ate aqui e um location novo no Nginx (fora deste repo).
+# container proprios.
+#
+# ATENCAO - a arquitetura do PedroServe MUDOU em 2026-08-05. O que valia antes
+# (e estava descrito aqui) era: Cloudflare Tunnel -> Nginx no host (porta 80)
+# -> proxy_pass pra 127.0.0.1:8092. Esse Nginx foi desabilitado por disputar a
+# porta 80 com o Traefik, e hoje o caminho e:
+#
+#   Cloudflare Tunnel -> Traefik (porta 80) -> http://edsonsushi-app:80
+#
+# O Traefik alcanca este container PELO NOME, o que exige os dois estarem na
+# mesma rede Docker - dai o "networks" abaixo. Se este servico voltar a rodar
+# sem essa rede, o site cai com a tela do sistema das Oficinas no lugar dele.
+# A regra de roteamento (/edson-sushi -> este container) vive no repo das
+# Oficinas, em traefik/dynamic/01-edson-sushi.yml.
+#
+# A porta em loopback continua publicada de proposito: serve de diagnostico
+# (curl http://127.0.0.1:8092 dentro do servidor) e de rota alternativa caso
+# um dia se volte a usar um proxy no host.
 #
 # Uso: docker compose -p edsonsushi -f docker-compose.prod.yml up -d --build
 
@@ -19,8 +31,18 @@ services:
     restart: unless-stopped
     ports:
       - "127.0.0.1:8092:80"
+    networks:
+      - carvalhotech-network
     logging:
       driver: "json-file"
       options:
         max-size: "10m"
         max-file: "5"
+
+# Rede criada e mantida pelo compose do Carvalho Tech Oficinas. "external: true"
+# = este projeto so se conecta, nunca cria nem remove. Se o container das
+# Oficinas nunca tiver subido, esta rede nao existe e o "up" falha com erro
+# claro, em vez de subir num estado quebrado.
+networks:
+  carvalhotech-network:
+    external: true
